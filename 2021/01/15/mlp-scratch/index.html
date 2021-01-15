@@ -135,53 +135,42 @@
 <h1 id="理论基础">理论基础</h1>
 <p>多层感知机在单层神经网络的基础上引入了一到多个<strong>隐藏层（hidden layer）</strong>。全连接层只是对数据做<strong>仿射变换（affine transformation）</strong>，而多个仿射变换的叠加仍然是一个仿射变换。解决问题的一个方法是引入<strong>非线性变换</strong>，例如对隐藏变量使用按元素运算的非线性函数进行变换，然后再作为下一个全连接层的输入。这个非线性函数被称为<strong>激活函数（activation function）</strong>。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> autograd, nd</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">xyplot</span>(<span class="params">x_vals, y_vals, name</span>):</span></span><br><span class="line">  <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">  	plot x and y</span></span><br><span class="line"><span class="string">  &#x27;&#x27;&#x27;</span></span><br><span class="line">    d2l.set_figsize(figsize=(<span class="number">5</span>, <span class="number">2.5</span>))</span><br><span class="line">    d2l.plt.plot(x_vals.asnumpy(), y_vals.asnumpy())</span><br><span class="line">    d2l.plt.xlabel(<span class="string">&#x27;x&#x27;</span>)</span><br><span class="line">    d2l.plt.ylabel(name + <span class="string">&#x27;(x)&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="激活函数">激活函数</h2>
-<h4 id="relu函数">ReLU函数</h4>
+<h2 id="relu函数">ReLU函数</h2>
 <p>ReLU函数<strong>只保留正数元素</strong>，并将负数元素清零 <span class="math display">\[
 \text{ReLU}(x) = \max(x, 0)
 \]</span></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x = nd.arange(-<span class="number">8.0</span>, <span class="number">8.0</span>, <span class="number">0.1</span>)</span><br><span class="line">x.attach_grad()</span><br><span class="line"><span class="keyword">with</span> autograd.record():</span><br><span class="line">    y = x.relu()</span><br><span class="line">xyplot(x, y, <span class="string">&#x27;relu&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<figure>
-<img src="/images/output_3_0.svg" alt="svg" /><figcaption>svg</figcaption>
-</figure>
+<p><img src="/images/output_3_0.svg" /></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y.backward()</span><br><span class="line">xyplot(x, x.grad, <span class="string">&#x27;grad of relu&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <figure>
 <img src="/images/output_5_0.svg" alt="svg" /><figcaption>svg</figcaption>
 </figure>
-<h4 id="sigmoid函数">sigmoid函数</h4>
+<h2 id="sigmoid函数">sigmoid函数</h2>
 <p>sigmoid函数可以<strong>将元素的值变换到0和1之间</strong>：</p>
 <p><span class="math display">\[
 \text{sigmoid}(x) = \frac{1}{1 + \exp(-x)}
 \]</span> sigmoid函数在早期的神经网络中较为普遍，但它目前逐渐被更简单的ReLU函数取代。下面绘制了sigmoid函数。当输入接近0时，sigmoid函数接近线性变换。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> autograd.record():</span><br><span class="line">    y = x.sigmoid()</span><br><span class="line">xyplot(x, y, <span class="string">&#x27;sigmoid&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<figure>
-<img src="/images/output_7_0.svg" alt="svg" /><figcaption>svg</figcaption>
-</figure>
+<p><img src="/images/output_7_0.svg" /></p>
 <p>依据链式法则，sigmoid函数的导数</p>
 <p><span class="math display">\[
 \text{sigmoid}&#39;(x) = \text{sigmoid}(x)\left(1-\text{sigmoid}(x)\right)
 \]</span> 当输入为0时，sigmoid函数的导数达到最大值0.25；当输入越偏离0时，sigmoid函数的导数越接近0。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y.backward()</span><br><span class="line">xyplot(x, x.grad, <span class="string">&#x27;grad of sigmoid&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<figure>
-<img src="/images/output_9_0.svg" alt="svg" /><figcaption>svg</figcaption>
-</figure>
-<h4 id="tanh函数">tanh函数</h4>
+<p><img src="/images/output_9_0.svg" /></p>
+<h2 id="tanh函数">tanh函数</h2>
 <p>tanh（双曲正切）函数可以<strong>将元素的值变换到-1和1之间</strong>：</p>
 <p><span class="math display">\[
 \text{tanh}(x) = \frac{1 - \exp(-2x)}{1 + \exp(-2x)}
 \]</span> 当输入接近0时，tanh函数接近线性变换。虽然该函数的形状和sigmoid函数的形状很像，但tanh函数<strong>在坐标系的原点上对称</strong>。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> autograd.record():</span><br><span class="line">    y = x.tanh()</span><br><span class="line">xyplot(x, y, <span class="string">&#x27;tanh&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<figure>
-<img src="/images/output_11_0.svg" alt="svg" /><figcaption>svg</figcaption>
-</figure>
+<p><img src="/images/output_11_0.svg" /></p>
 <p>依据链式法则，tanh函数的导数</p>
 <p><span class="math display">\[
 \text{tanh}&#39;(x) = 1 - \text{tanh}^2(x)
 \]</span> 下面绘制了tanh函数的导数。当输入为0时，tanh函数的导数达到最大值1；当输入越偏离0时，tanh函数的导数越接近0。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y.backward()</span><br><span class="line">xyplot(x, x.grad, <span class="string">&#x27;grad of tanh&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<figure>
-<img src="/images/output_13_0.svg" alt="svg" /><figcaption>svg</figcaption>
-</figure>
+<p><img src="/images/output_13_0.svg" /></p>
 <p>多层感知机就是<strong>含有至少一个隐藏层的由全连接层组成的神经网络，且每个隐藏层的输出通过激活函数进行变换</strong>。多层感知机的层数和各隐藏层中隐藏单元个数都是超参数。以单隐藏层为例并沿用本节之前定义的符号，多层感知机按以下方式计算输出： <span class="math display">\[
 \begin{aligned}
 \boldsymbol{H} &amp;= \phi(\boldsymbol{X} \boldsymbol{W}_h + \boldsymbol{b}_h)\\
@@ -212,7 +201,7 @@
 <h2 id="训练模型">训练模型</h2>
 <p>我们在这里设超参数迭代周期数为5，学习率为0.5。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">num_epochs, lr = <span class="number">5</span>, <span class="number">0.5</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_ch3</span>(<span class="params">net, train_iter, test_iter, loss, num_epochs, batch_size,</span></span></span><br><span class="line"><span class="function"><span class="params">              params=<span class="literal">None</span>, lr=<span class="literal">None</span>, trainer=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">        train_l_sum, train_acc_sum, n = <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> train_iter:</span><br><span class="line">            <span class="comment">#自动计算梯度</span></span><br><span class="line">            <span class="keyword">with</span> autograd.record():</span><br><span class="line">                y_hat = net(X)</span><br><span class="line">                <span class="comment">#计算损失函数</span></span><br><span class="line">                l = loss(y_hat, y).<span class="built_in">sum</span>()</span><br><span class="line">            <span class="comment">#l求导</span></span><br><span class="line">            l.backward()</span><br><span class="line">            <span class="keyword">if</span> trainer <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                d2l.sgd(params, lr, batch_size)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment">#前向运算</span></span><br><span class="line">                trainer.step(batch_size)  <span class="comment"># “softmax回归的简洁实现”一节将用到</span></span><br><span class="line">            y = y.astype(<span class="string">&#x27;float32&#x27;</span>)</span><br><span class="line">            <span class="comment"># 累积损失函数</span></span><br><span class="line">            train_l_sum += l.asscalar()</span><br><span class="line">            <span class="comment"># 累积得分</span></span><br><span class="line">            train_acc_sum += (y_hat.argmax(axis=<span class="number">1</span>) == y).<span class="built_in">sum</span>().asscalar()</span><br><span class="line">            n += y.size</span><br><span class="line">        test_acc = evaluate_accuracy(test_iter, net)</span><br><span class="line">        print(<span class="string">&#x27;epoch %d, loss %.4f, train acc %.3f, test acc %.3f&#x27;</span></span><br><span class="line">              % (epoch + <span class="number">1</span>, train_l_sum / n, train_acc_sum / n, test_acc))</span><br><span class="line">        </span><br><span class="line">train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size,</span><br><span class="line">              params, lr)</span><br></pre></td></tr></table></figure>
-<h2 id="简介实现">简介实现</h2>
+<h1 id="简洁实现">简洁实现</h1>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> gluon, init</span><br><span class="line"><span class="keyword">from</span> mxnet.gluon <span class="keyword">import</span> loss <span class="keyword">as</span> gloss, nn</span><br><span class="line"></span><br><span class="line">net = nn.Sequential()</span><br><span class="line">net.add(nn.Dense(<span class="number">256</span>, activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">        nn.Dense(<span class="number">10</span>))</span><br><span class="line">net.initialize(init.Normal(sigma=<span class="number">0.01</span>))</span><br><span class="line"></span><br><span class="line">batch_size = <span class="number">256</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)</span><br><span class="line"></span><br><span class="line">loss = gloss.SoftmaxCrossEntropyLoss()</span><br><span class="line">trainer = gluon.Trainer(net.collect_params(), <span class="string">&#x27;sgd&#x27;</span>, &#123;<span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">0.5</span>&#125;)</span><br><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line">train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, <span class="literal">None</span>, <span class="literal">None</span>, trainer)</span><br></pre></td></tr></table></figure>
 <h2 id="小结">小结</h2>
 <ul>
@@ -228,7 +217,7 @@
 
 
 <div class="tags">
-    <a href="/tags/MLP底层逻辑-MXNET/" class="button small">MLP底层逻辑 MXNET</a>
+    <a href="/tags/MLP/" class="button small">MLP</a> <a href="/tags/MXNET/" class="button small">MXNET</a> <a href="/tags/激活函数/" class="button small">激活函数</a>
 </div>
 
 

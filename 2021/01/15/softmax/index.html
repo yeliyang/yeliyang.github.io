@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--Description-->
+    
+        <meta name="description" content="理论基础
+softmax函数在深度学习领域应用非常广，不论是卷积神经网络CNN在做图像分类时，还是循环神经网络在自然语言处理方向为文章分类，又或者是在推荐系统方向上的召回，都需要在输出层之前要加一层softmax，作用就是为了将隐藏层的输出转化为一个相当于输出个数为标签类别数的概率值。softmax">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Liyang Ye">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="softmax回归"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="Liyang&#39;s Blog"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    <!-- Title -->
+    
+    <title>softmax回归 - Liyang&#39;s Blog</title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/sass/main.css">
+
+
+    <!--[if lt IE 8]>
+        
+<script src="/js/ie/html5shiv.js"></script>
+
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+        
+<link rel="stylesheet" href="/sass/ie8.css">
+
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+        
+<link rel="stylesheet" href="/sass/ie9.css">
+
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Menu -->
+        <!-- Header -->
+<header id="header">
+    <div class="inner">
+
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <span class="symbol"><img src="/images/logo.svg" alt="" /></span><span class="title">Liyang's Blog</span>
+        </a>
+
+        <!-- Nav -->
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        
+            <li>
+                <a href="/">Home</a>
+            </li>
+        
+            <li>
+                <a href="/archives">Archives</a>
+            </li>
+        
+            <li>
+                <a href="/about.html">About</a>
+            </li>
+        
+    </ul>
+</nav>
+
+
+        <div id="main">
+            <div class="inner">
+
+                <!-- Main Content -->
+                
+
+    <h1 class="title">softmax回归</h1>
+    <div class="meta">
+        2021-01-15
+    </div>
+
+
+    <span class="image main"><img src="/images/softmax.jpg" alt="" /></span>
+
+
+<!-- Gallery -->
+
+
+<!-- Content -->
+<h1 id="理论基础">理论基础</h1>
+<p>softmax函数在深度学习领域应用非常广，不论是卷积神经网络CNN在做图像分类时，还是循环神经网络在自然语言处理方向为文章分类，又或者是在推荐系统方向上的召回，都需要在输出层之前要加一层softmax，作用就是为了将隐藏层的输出转化为一个相当于输出个数为标签类别数的概率值。softmax可以很好的针对离散值进行训练及预测。</p>
+<p>softmax回归同线性回归一样，也是一个单层神经网络。由于每个输出𝑜1,𝑜2,𝑜3的计算都要依赖于所有的输入𝑥1,𝑥2,𝑥3,𝑥4x1,x2,x3,x4，softmax回归的输出层也是一个全连接层。</p>
+<p><img src="images/softmaxreg.svg" /></p>
+<p>如果直接使用输出层的输出有两个问题。一方面，由于<strong>输出层的输出值的范围不确定</strong>，我们难以直观上判断这些值的意义。另一方面，由于<strong>真实标签是离散值</strong>，这些离散值与不确定范围的输出值之间的<strong>误差难以衡量</strong>。</p>
+<p>softmax运算符（softmax operator）解决了以上两个问题。它通过下式将输出值变换成值为正且和为1的概率分布： <span class="math display">\[
+\hat{y}_1, \hat{y}_2, \hat{y}_3 = \text{softmax}(o_1, o_2, o_3),
+\]</span> 其中 <span class="math display">\[
+\hat{y}_1 = \frac{ \exp(o_1)}{\sum_{i=1}^3 \exp(o_i)},\quad
+\hat{y}_2 = \frac{ \exp(o_2)}{\sum_{i=1}^3 \exp(o_i)},\quad
+\hat{y}_3 = \frac{ \exp(o_3)}{\sum_{i=1}^3 \exp(o_i)}.
+\]</span></p>
+<p>容易看出𝑦̂1+𝑦̂2+𝑦̂3=1且0≤𝑦̂1,𝑦̂2,𝑦̂3≤1，因此𝑦̂1,𝑦̂2,𝑦̂3是一个合法的概率分布。这时候，如果𝑦̂2=0.8，不管𝑦̂1和𝑦̂3的值是多少，我们都知道图像类别为猫的概率是80%。此外，我们注意到 <span class="math display">\[
+\operatorname*{argmax}_i o_i = \operatorname*{argmax}_i \hat y_i,
+\]</span> 因此<strong>softmax运算不改变预测类别输出</strong>。</p>
+<h2 id="softmax矢量计算">softmax矢量计算</h2>
+<p>softmax回归的矢量计算表达式为: <span class="math display">\[
+\begin{aligned}
+\boldsymbol{O} &amp;= \boldsymbol{X} \boldsymbol{W} + \boldsymbol{b},\\
+\boldsymbol{\hat{Y}} &amp;= \text{softmax}(\boldsymbol{O}),
+\end{aligned}
+\]</span></p>
+<h2 id="交叉熵损失函数">交叉熵损失函数</h2>
+<p>我们可以像线性回归那样使用平方损失函数‖𝒚̂(𝑖)−𝒚(𝑖)‖2/2。然而，想要预测分类结果正确，我们其实<strong>并不需要预测概率完全等于标签概率</strong>。例如，在图像分类的例子里，如果𝑦(𝑖)=3，那么我们只需要𝑦̂(𝑖)3比其他两个预测值𝑦̂(𝑖)1和𝑦̂(𝑖)2大就行了。即使𝑦̂(𝑖)3值为0.6，不管其他两个预测值为多少，类别预测均正确。而<strong>平方损失则过于严格</strong>，例如𝑦̂(𝑖)1=𝑦̂(𝑖)2=0.2比𝑦̂(𝑖)1=0,𝑦̂(𝑖)2=0.4的损失要小很多，虽然两者都有同样正确的分类预测结果。</p>
+<p>改善上述问题的一个方法是使用更适合衡量两个概率分布差异的测量函数。其中，交叉熵（cross entropy）是一个常用的衡量方法： <span class="math display">\[
+\ell(\boldsymbol{\Theta}) = \frac{1}{n} \sum_{i=1}^n H\left(\boldsymbol y^{(i)}, \boldsymbol {\hat y}^{(i)}\right )
+\]</span> 交叉熵只关心对正确类别的预测概率，因为只要其值足够大，就可以确保分类结果正确。当然，遇到一个样本有多个标签时，例如图像里含有不止一个物体时，我们并不能做这一步简化。但即便对于这种情况，交叉熵同样只关心对图像中出现的物体类别的预测概率。</p>
+<p>假设训练数据集的样本数为<span class="math inline">\(n\)</span>，交叉熵损失函数定义为 <span class="math display">\[
+\ell(\boldsymbol{\Theta}) = \frac{1}{n} \sum_{i=1}^n H\left(\boldsymbol y^{(i)}, \boldsymbol {\hat y}^{(i)}\right )
+\]</span> 其中<span class="math inline">\(\boldsymbol{\Theta}\)</span>代表模型参数。同样地，如果每个样本只有一个标签，那么交叉熵损失可以简写成<span class="math inline">\(\ell(\boldsymbol{\Theta}) = -(1/n) \sum_{i=1}^n \log \hat y_{y^{(i)}}^{(i)}\)</span>。从另一个角度来看，我们知道最小化<span class="math inline">\(\ell(\boldsymbol{\Theta})\)</span>等价于最大化<span class="math inline">\(\exp(-n\ell(\boldsymbol{\Theta}))=\prod_{i=1}^n \hat y_{y^{(i)}}^{(i)}\)</span>，即<strong>最小化交叉熵损失函数等价于最大化训练数据集所有标签类别的联合预测概率</strong>。</p>
+
+
+<!-- Tags -->
+
+
+
+<div class="tags">
+    <a href="/tags/MXNET/" class="button small">MXNET</a> <a href="/tags/softmax/" class="button small">softmax</a> <a href="/tags/交叉熵/" class="button small">交叉熵</a>
+</div>
+
+
+
+<!-- Comments -->
+<div>
+    
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+</div>
+
+
+
+    
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+          }
+        });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+            tex2jax: {
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+          });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+              var all = MathJax.Hub.getAllJax(), i;
+              for(i=0; i < all.length; i += 1) {
+                  all[i].SourceElement().parentNode.className += ' has-jax';
+              }
+          });
+      </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+<footer id="footer">
+    <div class="inner">
+        <section>
+            <h2>About</h2>
+            <div>
+                This blog is used to save the things that I have learnt from Machine Learning and Deep Learning.
+            </div>
+        </section>
+        <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+                
+                
+                
+                
+                
+                    <li><a href="https://github.com/yeliyang/" class="icon style2 fa-github" target="_blank" ><span class="label">GitHub</span></a></li>
+                
+                
+                
+                
+                
+                    <li><a href="\#" class="icon style2 fa-envelope-o" target="_blank" ><span class="label">Email</span></a></li>
+                
+                
+                    <li><a href="\#" class="icon style2 fa-rss" target="_blank" ><span class="label">RSS</span></a></li>
+                
+            </ul>
+        </section>
+        <ul class="copyright">
+            <li>&copy; Untitled. All rights reserved</li>
+            <li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+            <li>Hexo: <a href="http://www.codeblocq.com/" target="_blank">Jonathan Klughertz</a></li>
+        </ul>
+    </div>
+</footer>
+    </div>
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- skel -->
+
+<script src="/js/skel.min.js"></script>
+
+
+<!-- Custom Code -->
+
+<script src="/js/util.js"></script>
+
+
+<!--[if lte IE 8]>
+
+<script src="/js/ie/respond.min.js"></script>
+
+<![endif]-->
+
+<!-- Custom Code -->
+
+<script src="/js/main.js"></script>
+
+
+<!-- Gallery -->
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'liyang';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>
