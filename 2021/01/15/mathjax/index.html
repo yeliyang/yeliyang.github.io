@@ -123,8 +123,31 @@
 
     <h1 class="title">mathjax</h1>
     <div class="meta">
-        2021-01-15
+        
+        
+            <span class="post-count">
+           字数:
+            <a href="">623字 |</a>  
+            </span>
+        
+        
+            <span class="post-count">
+           花费时间:
+            <a href="">3min |</a>  
+            </span>
+        
+	<span class="post-count">发布于:2021-01-15</span>
     </div>
+
+
+<!-- Tags -->
+
+
+<div class="tags">
+    <a href="/tags/LaTeX/" class="button small">LaTeX</a>
+</div>
+
+
 
 
     <span class="image main"><img src="/images/LaTeX_logo.svg" alt="" /></span>
@@ -146,7 +169,7 @@
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># MathJax Support</span></span><br><span class="line"><span class="attr">mathjax:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">cdn:</span> <span class="string">https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span></span><br></pre></td></tr></table></figure>
 <p>再在theme/theme-name/layout/post.ejs的末尾加入:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;% if (page.mathjax &#x3D;&#x3D; true)&#123; %&gt;</span><br><span class="line">    &lt;%- partial(&#39;mathjax&#39;) %&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
-<p>之后再在你的文章里加入:</p>
+<p>之后每次再在你的文章里加入，或者直接一次性加在./scaffolds/post.md中:</p>
 <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mathjax: true</span><br></pre></td></tr></table></figure>
 <p>用来启动markdown对LaTeX的支持。</p>
 <h2 id="设置渲染">设置渲染</h2>
@@ -165,15 +188,6 @@
 \]</span></p>
 <h1 id="结尾">结尾</h1>
 <p>至此你就将你心爱的主题做成了LaTeX支持的主题了。</p>
-
-
-<!-- Tags -->
-
-
-
-<div class="tags">
-    <a href="/tags/LaTeX/" class="button small">LaTeX</a>
-</div>
 
 
 

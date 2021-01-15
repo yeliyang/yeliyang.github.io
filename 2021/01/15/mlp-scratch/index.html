@@ -121,11 +121,34 @@
 
     <h1 class="title">多层感知机</h1>
     <div class="meta">
-        2021-01-15
+        
+        
+            <span class="post-count">
+           字数:
+            <a href="">1.6k字 |</a>  
+            </span>
+        
+        
+            <span class="post-count">
+           花费时间:
+            <a href="">7min |</a>  
+            </span>
+        
+	<span class="post-count">发布于:2021-01-15</span>
     </div>
 
 
-    <span class="image main"><img src="/images/rnn_heros.jpg" alt="" /></span>
+<!-- Tags -->
+
+
+<div class="tags">
+    <a href="/tags/MLP/" class="button small">MLP</a> <a href="/tags/MXNET/" class="button small">MXNET</a> <a href="/tags/激活函数/" class="button small">激活函数</a>
+</div>
+
+
+
+
+    <span class="image main"><img src="/images/mlp.png" alt="" /></span>
 
 
 <!-- Gallery -->
@@ -142,9 +165,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x = nd.arange(-<span class="number">8.0</span>, <span class="number">8.0</span>, <span class="number">0.1</span>)</span><br><span class="line">x.attach_grad()</span><br><span class="line"><span class="keyword">with</span> autograd.record():</span><br><span class="line">    y = x.relu()</span><br><span class="line">xyplot(x, y, <span class="string">&#x27;relu&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p><img src="/images/output_3_0.svg" /></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y.backward()</span><br><span class="line">xyplot(x, x.grad, <span class="string">&#x27;grad of relu&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<figure>
-<img src="/images/output_5_0.svg" alt="svg" /><figcaption>svg</figcaption>
-</figure>
+<p><img src="/images/output_5_0.svg" /></p>
 <h2 id="sigmoid函数">sigmoid函数</h2>
 <p>sigmoid函数可以<strong>将元素的值变换到0和1之间</strong>：</p>
 <p><span class="math display">\[
@@ -210,15 +231,6 @@
 <li>可以通过手动定义模型及其参数来实现简单的多层感知机。</li>
 <li>当多层感知机的层数较多时，本节的实现方法会显得较烦琐，例如在定义模型参数的时候。</li>
 </ul>
-
-
-<!-- Tags -->
-
-
-
-<div class="tags">
-    <a href="/tags/MXNET/" class="button small">MXNET</a> <a href="/tags/MLP/" class="button small">MLP</a> <a href="/tags/激活函数/" class="button small">激活函数</a>
-</div>
 
 
 
