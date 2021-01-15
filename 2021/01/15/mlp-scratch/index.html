@@ -4,18 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>Hexo</title>
+  <title>MLP 多层感知机 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="title: MLP 多层感知机date: 2021-01-15 08:15:00tags: MLP底层逻辑 MXNET  [TOC] 多层感知机的从零开始实现我们已经从上一节里了解了多层感知机的原理。下面，我们一起来动手实现一个多层感知机。首先导入实现所需的包或模块。 1234%matplotlib inlineimport d2lzh as d2lfrom mxnet import ndfr">
+  <meta name="description" content="多层感知机的从零开始实现我们已经从上一节里了解了多层感知机的原理。下面，我们一起来动手实现一个多层感知机。首先导入实现所需的包或模块。 1234%matplotlib inlineimport d2lzh as d2lfrom mxnet import ndfrom mxnet.gluon import loss as gloss 获取和读取数据这里继续使用Fashion-MNIST数据集。我们将">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="MLP 多层感知机">
 <meta property="og:url" content="http://example.com/2021/01/15/mlp-scratch/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="title: MLP 多层感知机date: 2021-01-15 08:15:00tags: MLP底层逻辑 MXNET  [TOC] 多层感知机的从零开始实现我们已经从上一节里了解了多层感知机的原理。下面，我们一起来动手实现一个多层感知机。首先导入实现所需的包或模块。 1234%matplotlib inlineimport d2lzh as d2lfrom mxnet import ndfr">
+<meta property="og:description" content="多层感知机的从零开始实现我们已经从上一节里了解了多层感知机的原理。下面，我们一起来动手实现一个多层感知机。首先导入实现所需的包或模块。 1234%matplotlib inlineimport d2lzh as d2lfrom mxnet import ndfrom mxnet.gluon import loss as gloss 获取和读取数据这里继续使用Fashion-MNIST数据集。我们将">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-01-15T00:19:22.990Z">
-<meta property="article:modified_time" content="2021-01-15T00:41:44.158Z">
+<meta property="article:published_time" content="2021-01-15T00:47:00.000Z">
+<meta property="article:modified_time" content="2021-01-15T00:47:15.382Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="MLP底层逻辑 MXNET">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
@@ -76,20 +77,26 @@
         <section id="main"><article id="post-mlp-scratch" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/01/15/mlp-scratch/" class="article-date">
-  <time class="dt-published" datetime="2021-01-15T00:19:22.990Z" itemprop="datePublished">2021-01-15</time>
+  <time class="dt-published" datetime="2021-01-15T00:47:00.000Z" itemprop="datePublished">2021-01-15</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      MLP 多层感知机
+    </h1>
+  
+
+      </header>
+    
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>title: MLP 多层感知机<br>date: 2021-01-15 08:15:00<br>tags: MLP底层逻辑 MXNET</p>
-</blockquote>
-<p>[TOC]</p>
-<h1 id="多层感知机的从零开始实现"><a href="#多层感知机的从零开始实现" class="headerlink" title="多层感知机的从零开始实现"></a>多层感知机的从零开始实现</h1><p>我们已经从上一节里了解了多层感知机的原理。下面，我们一起来动手实现一个多层感知机。首先导入实现所需的包或模块。</p>
+        <h1 id="多层感知机的从零开始实现"><a href="#多层感知机的从零开始实现" class="headerlink" title="多层感知机的从零开始实现"></a>多层感知机的从零开始实现</h1><p>我们已经从上一节里了解了多层感知机的原理。下面，我们一起来动手实现一个多层感知机。首先导入实现所需的包或模块。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> nd</span><br><span class="line"><span class="keyword">from</span> mxnet.gluon <span class="keyword">import</span> loss <span class="keyword">as</span> gloss</span><br></pre></td></tr></table></figure>
 <h2 id="获取和读取数据"><a href="#获取和读取数据" class="headerlink" title="获取和读取数据"></a>获取和读取数据</h2><p>这里继续使用Fashion-MNIST数据集。我们将使用多层感知机对图像进行分类。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">batch_size = <span class="number">256</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)</span><br></pre></td></tr></table></figure>
@@ -115,10 +122,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/15/mlp-scratch/" data-id="ckjxjc1a70001bjwd0p5wa7c7" data-title="" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/01/15/mlp-scratch/" data-id="ckjxjc1a70001bjwd0p5wa7c7" data-title="MLP 多层感知机" class="article-share-link">Share</a>
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MLP%E5%BA%95%E5%B1%82%E9%80%BB%E8%BE%91-MXNET/" rel="tag">MLP底层逻辑 MXNET</a></li></ul>
+
     </footer>
   </div>
   
@@ -145,9 +154,23 @@
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/MLP%E5%BA%95%E5%B1%82%E9%80%BB%E8%BE%91-MXNET/" rel="tag">MLP底层逻辑 MXNET</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/MLP%E5%BA%95%E5%B1%82%E9%80%BB%E8%BE%91-MXNET/" style="font-size: 10px;">MLP底层逻辑 MXNET</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -166,7 +189,7 @@
       <ul>
         
           <li>
-            <a href="/2021/01/15/mlp-scratch/">(no title)</a>
+            <a href="/2021/01/15/mlp-scratch/">MLP 多层感知机</a>
           </li>
         
           <li>
