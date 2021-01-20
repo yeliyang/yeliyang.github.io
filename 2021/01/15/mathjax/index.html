@@ -11,9 +11,20 @@
     <!--Description-->
     
         <meta name="description" content="引言
-目前火热的hexo的NexT主题自带支持LaTeX，那么那些没有自带LaTeX支持的主题们就应该被劝退吗？本文就针对这个问题，给那些hexo中一些没有支持LaTeX的主题们，让它们更适合一些有设计感，而且不喜欢和大家博客风格大同小异的ML, CV, Math的朋友们。
 解决步骤
-安装mathj">
+
+安装mathjax
+设置渲染
+测试
+
+结尾
+
+
+
+
+
+引言 
+目前火热的hexo的NexT主题自带支持LaTeX，那么那些没有自带LaTeX支持的主题们就应该被劝退吗？本文就针对这个问题，给那些hexo中一些没有支持LaTeX的主题们，让它们更适合一些有设计感，而且不喜欢和大家博客">
     
 
     <!--Author-->
@@ -127,12 +138,12 @@
         
             <span class="post-count">
            字数:
-            <a href="">623字 |</a>  
+            <a href="">640字 |</a>  
             </span>
         
         
             <span class="post-count">
-           花费时间:
+           阅读时间:
             <a href="">3min |</a>  
             </span>
         
@@ -150,17 +161,35 @@
 
 
 
-    <span class="image main"><img src="/images/LaTeX_logo.svg" alt="" /></span>
+    <span class="image main"><img src="/images/latex/LaTeX_logo.svg" alt="" /></span>
 
 
 <!-- Gallery -->
 
 
 <!-- Content -->
-<h1 id="引言">引言</h1>
+<div class="tocStart">
+
+</div>
+<!-- toc -->
+<ul>
+<li><a href="#yin-yan">引言</a></li>
+<li><a href="#jie-jue-bu-zou">解决步骤</a>
+<ul>
+<li><a href="#an-zhuang-mathjax">安装mathjax</a></li>
+<li><a href="#she-zhi-xuan-ran">设置渲染</a></li>
+<li><a href="#ce-shi">测试</a></li>
+</ul></li>
+<li><a href="#jie-wei">结尾</a></li>
+</ul>
+<!-- tocstop -->
+<div class="tocEnd">
+
+</div>
+<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1>
 <p>目前火热的hexo的NexT主题自带支持LaTeX，那么那些没有自带LaTeX支持的主题们就应该被劝退吗？本文就针对这个问题，给那些hexo中一些没有支持LaTeX的主题们，让它们更适合一些有设计感，而且不喜欢和大家博客风格大同小异的ML, CV, Math的朋友们。</p>
-<h1 id="解决步骤">解决步骤</h1>
-<h2 id="安装mathjax">安装mathjax</h2>
+<h1><span id="jie-jue-bu-zou">解决步骤</span><a href="#jie-jue-bu-zou" class="header-anchor"> </a></h1>
+<h2><span id="an-zhuang-mathjax">安装mathjax</span><a href="#an-zhuang-mathjax" class="header-anchor"> </a></h2>
 <p>如果你的theme/theme-name/_config.yml里没有mathjax:的字样出现的话，那么很荣幸的通知你，和我一样，网上大部分的让hexo支持LaTeX的方式都无效。我选择的是phantom，一个我个人很喜欢的一个主题，但是它就没有任何LaTeX支持。这种情况我们就需要自己写一个mathjax.ejs（以下所有theme-name改成你们的主题名字即可， i.e. theme/phantom/layout/）:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> theme/theme-name/layout/</span><br><span class="line">vim mathjax.ejs</span><br></pre></td></tr></table></figure>
 <p>然后将下面这段代码拷贝进去:</p>
@@ -172,9 +201,9 @@
 <p>之后每次再在你的文章里加入，或者直接一次性加在./scaffolds/post.md中:</p>
 <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mathjax: true</span><br></pre></td></tr></table></figure>
 <p>用来启动markdown对LaTeX的支持。</p>
-<h2 id="设置渲染">设置渲染</h2>
+<h2><span id="she-zhi-xuan-ran">设置渲染</span><a href="#she-zhi-xuan-ran" class="header-anchor"> </a></h2>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm uninstall hexo-math</span><br><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure>
-<h2 id="测试">测试</h2>
+<h2><span id="ce-shi">测试</span><a href="#ce-shi" class="header-anchor"> </a></h2>
 <p>用一个softmax的逻辑公式测试： <span class="math display">\[
 \hat{y}_1, \hat{y}_2, \hat{y}_3 = \text{softmax}(o_1, o_2, o_3)
 \]</span></p>
@@ -186,7 +215,7 @@
 <p><span class="math display">\[
 \operatorname*{argmax}_i o_i = \operatorname*{argmax}_i \hat y_i
 \]</span></p>
-<h1 id="结尾">结尾</h1>
+<h1><span id="jie-wei">结尾</span><a href="#jie-wei" class="header-anchor"> </a></h1>
 <p>至此你就将你心爱的主题做成了LaTeX支持的主题了。</p>
 
 

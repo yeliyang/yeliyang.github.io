@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--Description-->
+    
+        <meta name="description" content="引言
+推荐系统基础概念
+推荐模型
+
+协同过滤算法族
+逻辑回归模型族
+因子分解机模型族
+组合模型
+
+
+
+
+
+
+引言 
+互联网企业的核心需求是“增长”，而推荐系统正是其能实现的核心。推荐系统首要解决的问题就是如何在“信息过载”的情况下为用户提供感兴趣的信息，而用户对于感兴趣的信息也会受到方方面面的影响而">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Liyang Ye">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="推荐系统"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="Liyang&#39;s Blog"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    <!-- Title -->
+    
+    <title>推荐系统 - Liyang&#39;s Blog</title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/sass/main.css">
+
+
+    <!--[if lt IE 8]>
+        
+<script src="/js/ie/html5shiv.js"></script>
+
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+        
+<link rel="stylesheet" href="/sass/ie8.css">
+
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+        
+<link rel="stylesheet" href="/sass/ie9.css">
+
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Menu -->
+        <!-- Header -->
+<header id="header">
+    <div class="inner">
+
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <span class="symbol"><img src="/images/logo.svg" alt="" /></span><span class="title">Liyang's Blog</span>
+        </a>
+
+        <!-- Nav -->
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        
+            <li>
+                <a href="/">Home</a>
+            </li>
+        
+            <li>
+                <a href="/archives">Archives</a>
+            </li>
+        
+            <li>
+                <a href="/about.html">About</a>
+            </li>
+        
+    </ul>
+</nav>
+
+
+        <div id="main">
+            <div class="inner">
+
+                <!-- Main Content -->
+                
+
+    <h1 class="title">推荐系统</h1>
+    <div class="meta">
+        
+        
+            <span class="post-count">
+           字数:
+            <a href="">937字 |</a>  
+            </span>
+        
+        
+            <span class="post-count">
+           阅读时间:
+            <a href="">3min |</a>  
+            </span>
+        
+	<span class="post-count">发布于:2021-01-18</span>
+    </div>
+
+
+<!-- Tags -->
+
+
+<div class="tags">
+    <a href="/tags/推荐算法/" class="button small">推荐算法</a>
+</div>
+
+
+
+
+    <span class="image main"><img src="/images/recommender/recommender_hero.jpg" alt="" /></span>
+
+
+<!-- Gallery -->
+
+
+<!-- Content -->
+<div class="tocStart">
+
+</div>
+<!-- toc -->
+<ul>
+<li><a href="#yin-yan">引言</a></li>
+<li><a href="#tui-jian-xi-tong-ji-chu-gai-nian">推荐系统基础概念</a></li>
+<li><a href="#tui-jian-mo-xing">推荐模型</a>
+<ul>
+<li><a href="#xie-tong-guo-lu-suan-fa-zu">协同过滤算法族</a></li>
+<li><a href="#luo-ji-hui-gui-mo-xing-zu">逻辑回归模型族</a></li>
+<li><a href="#yin-zi-fen-jie-ji-mo-xing-zu">因子分解机模型族</a></li>
+<li><a href="#zu-he-mo-xing">组合模型</a></li>
+</ul></li>
+</ul>
+<!-- tocstop -->
+<div class="tocEnd">
+
+</div>
+<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1>
+<p>互联网企业的核心需求是“增长”，而推荐系统正是其能实现的核心。推荐系统首要解决的问题就是如何在“信息过载”的情况下为用户提供感兴趣的信息，而用户对于感兴趣的信息也会受到方方面面的影响而随时改变，例如场景信息C（Context），物品信息I（Item），用户信息U（User）等。我们可以构建一个函数<span class="math inline">\(f(U,I,C)\)</span>，预测用户对特定物品的喜好程度，再根据喜好程度排序，生产推荐列表。</p>
+<h1><span id="tui-jian-xi-tong-ji-chu-gai-nian">推荐系统基础概念</span><a href="#tui-jian-xi-tong-ji-chu-gai-nian" class="header-anchor"> </a></h1>
+<p><strong>数据和信息</strong>部分逐渐发展为推荐系统中融合了数据离线批处理、实时流处理的数据流框架；<strong>算法和模型</strong>部分进一步细化为集<strong>训练</strong>、<strong>评估</strong>、<strong>部署</strong>、<strong>线上推断</strong>为一体的模型框架。在得到原始的数据信息后，推荐系统的数据处理系统会进一步加工原始数据：1.生成推荐模型所需的样本数据。2.生成推荐模型所需的特征，用于线上推断。3.生成商业智能（BI）系统所需的统计型数据。</p>
+<p>推荐系统的<strong>模型部分</strong>是推荐系统的主体，一般由<strong><code>召回层</code>, <code>排序层</code>, <code>补充策略与算法层</code></strong>组成。</p>
+<blockquote>
+<ol type="1">
+<li><p>召回层</p>
+<p>利用高效的召回规则、算法或简单的模型，快速从海量的候选集中召回用户可能感兴趣的物品。</p></li>
+<li><p>排序层</p>
+<p>利用排序模型对初筛的候选集进行精排序。</p></li>
+<li><p>补充策略与算法层</p>
+<p>也被称为<code>再排序层</code>，可以结合一些补充策略和算法对推荐列表进行一定的调整。</p></li>
+</ol>
+</blockquote>
+<p>模型训练可以根据训练环境的不同分为：<code>离线训练</code>和<code>在线训练</code>两部分。</p>
+<blockquote>
+<ol type="1">
+<li><p>离线训练</p>
+<p>特点：可以利用全量样本和特征，使模型逼近全局最优。</p></li>
+<li><p>在线训练</p>
+<p>特点：可以实时的消化新的数据样本，更快反映数据变化趋势，满足模型实时性的需求。</p></li>
+</ol>
+</blockquote>
+<h1><span id="tui-jian-mo-xing">推荐模型</span><a href="#tui-jian-mo-xing" class="header-anchor"> </a></h1>
+<p><img src="/images/recommender/传统推荐模型演化关系图.svg"></p>
+<h2><span id="xie-tong-guo-lu-suan-fa-zu">协同过滤算法族</span><a href="#xie-tong-guo-lu-suan-fa-zu" class="header-anchor"> </a></h2>
+<p>曾是推荐系统的首选模型，从物品相似度和用户相似度出发，协同过滤衍生出物品协同过滤（ItemCF）和用户协同过滤（UserCF）两种算法。为了可以更好地处理稀疏共现矩阵问题、增强模型的泛化能力，衍生出了矩阵分解模型（Matrix Factorization，MF）。</p>
+<ul>
+<li><a href="/2021/01/18/cf/">“协同过滤”</a></li>
+<li><a href="/2021/01/19/mf/">“矩阵分解”</a></li>
+</ul>
+<h2><span id="luo-ji-hui-gui-mo-xing-zu">逻辑回归模型族</span><a href="#luo-ji-hui-gui-mo-xing-zu" class="header-anchor"> </a></h2>
+<p>逻辑回归能够利用和融合更多用户、物品及上下文特征。从LR衍生出的<strong>增强了非线性能力的大规模分片线性模型</strong>（Large Scale Piece-wise Linear Model，LS-PLM），和逻辑回归发展出来的FM模型。</p>
+<ul>
+<li><a href="/2021/01/20/lr/">“逻辑回归”</a></li>
+</ul>
+<h2><span id="yin-zi-fen-jie-ji-mo-xing-zu">因子分解机模型族</span><a href="#yin-zi-fen-jie-ji-mo-xing-zu" class="header-anchor"> </a></h2>
+<p>因子分解机在传统逻辑回归的基础上，<strong>加入了二阶部分</strong>，使模型具备进行特征组合的能力。更进一步发展出来的<strong>域感知因子分解机</strong>（Field-aware Factorization Machine， FFM）通过<strong>加入特征域</strong>的概念，进一步<strong>加强了</strong>因子分解机<strong>特征交叉的能力</strong>。</p>
+<h2><span id="zu-he-mo-xing">组合模型</span><a href="#zu-he-mo-xing" class="header-anchor"> </a></h2>
+<p>融合多个模型的优点，将不同模型组合使用是推荐模型常用的方法。Facebook提出的GBDT+LR（梯度提升决策树+逻辑回归）组合模型是业界影响力较大的组合方式。</p>
+
+
+
+<!-- Comments -->
+<div>
+    
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+</div>
+
+
+
+    
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+          }
+        });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+            tex2jax: {
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+          });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+              var all = MathJax.Hub.getAllJax(), i;
+              for(i=0; i < all.length; i += 1) {
+                  all[i].SourceElement().parentNode.className += ' has-jax';
+              }
+          });
+      </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+<footer id="footer">
+    <div class="inner">
+        <section>
+            <h2>About</h2>
+            <div>
+                This blog is used to save the things that I have learnt from Machine Learning and Deep Learning.
+            </div>
+        </section>
+        <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+                
+                
+                
+                
+                
+                    <li><a href="https://github.com/yeliyang/" class="icon style2 fa-github" target="_blank" ><span class="label">GitHub</span></a></li>
+                
+                
+                
+                
+                
+                    <li><a href="\#" class="icon style2 fa-envelope-o" target="_blank" ><span class="label">Email</span></a></li>
+                
+                
+                    <li><a href="\#" class="icon style2 fa-rss" target="_blank" ><span class="label">RSS</span></a></li>
+                
+            </ul>
+        </section>
+        <ul class="copyright">
+            <li>&copy; Untitled. All rights reserved</li>
+            <li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+            <li>Hexo: <a href="http://www.codeblocq.com/" target="_blank">Jonathan Klughertz</a></li>
+        </ul>
+    </div>
+</footer>
+    </div>
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- skel -->
+
+<script src="/js/skel.min.js"></script>
+
+
+<!-- Custom Code -->
+
+<script src="/js/util.js"></script>
+
+
+<!--[if lte IE 8]>
+
+<script src="/js/ie/respond.min.js"></script>
+
+<![endif]-->
+
+<!-- Custom Code -->
+
+<script src="/js/main.js"></script>
+
+
+<!-- Gallery -->
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'liyang';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

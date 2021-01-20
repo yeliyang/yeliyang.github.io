@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--Description-->
+    
+        <meta name="description" content="引言
+权重衰减
+高维线性回归实验
+
+简洁实现
+
+丢弃法
+
+训练和测试模型
+简洁实现
+
+小结
+
+
+
+
+
+引言 
+深度学习中由于层度的增加，数据量的过少，数学公式采用三阶及以上的种种情况极易导致过拟合。防止过拟合是深度学习不可避免的必修课，目前主流的有两种防止过拟合的方法：1.权重衰减。2.丢弃法。
+权">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Liyang Ye">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="防止过拟合"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="Liyang&#39;s Blog"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    <!-- Title -->
+    
+    <title>防止过拟合 - Liyang&#39;s Blog</title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/sass/main.css">
+
+
+    <!--[if lt IE 8]>
+        
+<script src="/js/ie/html5shiv.js"></script>
+
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+        
+<link rel="stylesheet" href="/sass/ie8.css">
+
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+        
+<link rel="stylesheet" href="/sass/ie9.css">
+
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Menu -->
+        <!-- Header -->
+<header id="header">
+    <div class="inner">
+
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <span class="symbol"><img src="/images/logo.svg" alt="" /></span><span class="title">Liyang's Blog</span>
+        </a>
+
+        <!-- Nav -->
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        
+            <li>
+                <a href="/">Home</a>
+            </li>
+        
+            <li>
+                <a href="/archives">Archives</a>
+            </li>
+        
+            <li>
+                <a href="/about.html">About</a>
+            </li>
+        
+    </ul>
+</nav>
+
+
+        <div id="main">
+            <div class="inner">
+
+                <!-- Main Content -->
+                
+
+    <h1 class="title">防止过拟合</h1>
+    <div class="meta">
+        
+        
+            <span class="post-count">
+           字数:
+            <a href="">2.9k字 |</a>  
+            </span>
+        
+        
+            <span class="post-count">
+           阅读时间:
+            <a href="">13min |</a>  
+            </span>
+        
+	<span class="post-count">发布于:2021-01-17</span>
+    </div>
+
+
+<!-- Tags -->
+
+
+<div class="tags">
+    <a href="/tags/overfit/" class="button small">overfit</a> <a href="/tags/dropout/" class="button small">dropout</a> <a href="/tags/权重衰减/" class="button small">权重衰减</a>
+</div>
+
+
+
+
+    <span class="image main"><img src="/images/overfit/overfit_hero.jpeg" alt="" /></span>
+
+
+<!-- Gallery -->
+
+
+<!-- Content -->
+<div class="tocStart">
+
+</div>
+<!-- toc -->
+<ul>
+<li><a href="#yin-yan">引言</a></li>
+<li><a href="#quan-chong-shuai-jian">权重衰减</a></li>
+<li><a href="#gao-wei-xian-xing-hui-gui-shi-yan">高维线性回归实验</a>
+<ul>
+<li><a href="#jian-ji-shi-xian">简洁实现</a></li>
+</ul></li>
+<li><a href="#diu-qi-fa">丢弃法</a>
+<ul>
+<li><a href="#xun-lian-he-ce-shi-mo-xing">训练和测试模型</a></li>
+<li><a href="#jian-ji-shi-xian-1">简洁实现</a></li>
+</ul></li>
+<li><a href="#xiao-jie">小结</a></li>
+</ul>
+<!-- tocstop -->
+<div class="tocEnd">
+
+</div>
+<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1>
+<p>深度学习中由于层度的增加，数据量的过少，数学公式采用三阶及以上的种种情况极易导致过拟合。防止过拟合是深度学习不可避免的必修课，目前主流的有两种防止过拟合的方法：1.权重衰减。2.丢弃法。</p>
+<h1><span id="quan-chong-shuai-jian">权重衰减</span><a href="#quan-chong-shuai-jian" class="header-anchor"> </a></h1>
+<p>权重衰减（weight decay）等价于<span class="math inline">\(L_2\)</span>范数正则化（regularization）。正则化通过<strong>为模型损失函数添加惩罚项使学出的模型参数值较小</strong>，是应对过拟合的常用手段。我们先描述<span class="math inline">\(L_2\)</span>范数正则化，再解释它为何又称权重衰减。</p>
+<p><span class="math inline">\(L_2\)</span>范数正则化在模型原损失函数基础上添加<span class="math inline">\(L_2\)</span>范数惩罚项，从而得到训练所需要最小化的函数。<span class="math inline">\(L_2\)</span>范数惩罚项指的是模型权重参数每个元素的平方和与一个正的常数的乘积。以线性回归损失函数</p>
+<p><span class="math display">\[
+\ell(w_1, w_2, b) = \frac{1}{n} \sum_{i=1}^n \frac{1}{2}\left(x_1^{(i)} w_1 + x_2^{(i)} w_2 + b - y^{(i)}\right)^2
+\]</span> 为例，其中<span class="math inline">\(w_1, w_2\)</span>是<strong>权重参数</strong>，<span class="math inline">\(b\)</span>是<strong>偏差参数</strong>，样本<span class="math inline">\(i\)</span>的输入为<span class="math inline">\(x_1^{(i)}, x_2^{(i)}\)</span>，标签为<span class="math inline">\(y^{(i)}\)</span>，样本数为<span class="math inline">\(n\)</span>。将权重参数用向量<span class="math inline">\(\boldsymbol{w} = [w_1, w_2]\)</span>表示，带有<span class="math inline">\(L_2\)</span>范数惩罚项的新损失函数为</p>
+<p><span class="math display">\[\ell(w_1, w_2, b) + \frac{\lambda}{2n} \|\boldsymbol{w}\|^2,\]</span></p>
+<p>其中超参数<span class="math inline">\(\lambda &gt; 0\)</span>。当权重参数均为0时，惩罚项最小。当<span class="math inline">\(\lambda\)</span>较大时，惩罚项在损失函数中的比重较大，这通常会使学到的权重参数的元素较接近0。当<span class="math inline">\(\lambda\)</span>设为0时，惩罚项完全不起作用。上式中<span class="math inline">\(L_2\)</span>范数平方<span class="math inline">\(\|\boldsymbol{w}\|^2\)</span>展开后得到<span class="math inline">\(w_1^2 + w_2^2\)</span>。有了<span class="math inline">\(L_2\)</span>范数惩罚项后，在小批量随机梯度下降中，我们将权重<span class="math inline">\(w_1\)</span>和<span class="math inline">\(w_2\)</span>的迭代方式更改为</p>
+<p><span class="math display">\[
+\begin{aligned}
+w_1 &amp;\leftarrow \left(1- \frac{\eta\lambda}{|\mathcal{B}|} \right)w_1 -   \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}}x_1^{(i)} \left(x_1^{(i)} w_1 + x_2^{(i)} w_2 + b - y^{(i)}\right),\\
+w_2 &amp;\leftarrow \left(1- \frac{\eta\lambda}{|\mathcal{B}|} \right)w_2 -   \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}}x_2^{(i)} \left(x_1^{(i)} w_1 + x_2^{(i)} w_2 + b - y^{(i)}\right).
+\end{aligned}
+\]</span></p>
+<p>可见，<span class="math inline">\(L_2\)</span>范数正则化令权重<span class="math inline">\(w_1\)</span>和<span class="math inline">\(w_2\)</span>先自乘小于1的数，再减去不含惩罚项的梯度。因此，<span class="math inline">\(L_2\)</span>范数正则化又叫权重衰减。<strong>权重衰减通过惩罚绝对值较大的模型参数为需要学习的模型增加了限制</strong>，来达到防止过拟合的作用。实际场景中，我们有时也在惩罚项中添加<strong>偏差元素的平方和</strong>。</p>
+<h1><span id="gao-wei-xian-xing-hui-gui-shi-yan">高维线性回归实验</span><a href="#gao-wei-xian-xing-hui-gui-shi-yan" class="header-anchor"> </a></h1>
+<p>下面，我们以高维线性回归为例来引入一个过拟合问题，并使用权重衰减来应对过拟合。设数据样本特征的维度为<span class="math inline">\(p\)</span>。对于训练数据集和测试数据集中特征为<span class="math inline">\(x_1, x_2, \ldots, x_p\)</span>的任一样本，我们使用如下的线性函数来生成该样本的标签：</p>
+<p><span class="math display">\[y = 0.05 + \sum_{i = 1}^p 0.01x_i +  \epsilon,\]</span></p>
+<p>其中噪声项<span class="math inline">\(\epsilon\)</span>服从均值为0、标准差为0.01的正态分布。为了较容易地观察过拟合，我们考虑高维线性回归问题，如设维度<span class="math inline">\(p=200\)</span>；同时，我们特意把训练数据集的样本数设低，如20。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> autograd, gluon, init, nd</span><br><span class="line"><span class="keyword">from</span> mxnet.gluon <span class="keyword">import</span> data <span class="keyword">as</span> gdata, loss <span class="keyword">as</span> gloss, nn</span><br><span class="line"></span><br><span class="line">n_train, n_test, num_inputs = <span class="number">20</span>, <span class="number">100</span>, <span class="number">200</span></span><br><span class="line">true_w, true_b = nd.ones((num_inputs, <span class="number">1</span>)) * <span class="number">0.01</span>, <span class="number">0.05</span></span><br><span class="line"></span><br><span class="line">features = nd.random.normal(shape=(n_train + n_test, num_inputs))</span><br><span class="line">labels = nd.dot(features, true_w) + true_b</span><br><span class="line">labels += nd.random.normal(scale=<span class="number">0.01</span>, shape=labels.shape)</span><br><span class="line">train_features, test_features = features[:n_train, :], features[n_train:, :]</span><br><span class="line">train_labels, test_labels = labels[:n_train], labels[n_train:]</span><br></pre></td></tr></table></figure>
+<p>首先，定义随机初始化模型参数的函数。该函数为每个参数都附上梯度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_params</span>():</span></span><br><span class="line">    w = nd.random.normal(scale=<span class="number">1</span>, shape=(num_inputs, <span class="number">1</span>))</span><br><span class="line">    b = nd.zeros(shape=(<span class="number">1</span>,))</span><br><span class="line">    w.attach_grad()</span><br><span class="line">    b.attach_grad()</span><br><span class="line">    <span class="keyword">return</span> [w, b]</span><br></pre></td></tr></table></figure>
+<p>下面定义<span class="math inline">\(L_2\)</span>范数惩罚项。这里只惩罚模型的权重参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">l2_penalty</span>(<span class="params">w</span>):</span></span><br><span class="line">    <span class="keyword">return</span> (w**<span class="number">2</span>).<span class="built_in">sum</span>() / <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">batch_size, num_epochs, lr = <span class="number">1</span>, <span class="number">100</span>, <span class="number">0.003</span></span><br><span class="line">net, loss = d2l.linreg, d2l.squared_loss</span><br><span class="line">train_iter = gdata.DataLoader(gdata.ArrayDataset(</span><br><span class="line">    train_features, train_labels), batch_size, shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fit_and_plot</span>(<span class="params">lambd</span>):</span></span><br><span class="line">    w, b = init_params()</span><br><span class="line">    train_ls, test_ls = [], []</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> train_iter:</span><br><span class="line">            <span class="keyword">with</span> autograd.record():</span><br><span class="line">                <span class="comment"># 添加了L2范数惩罚项</span></span><br><span class="line">                l = loss(net(X, w, b), y) + lambd * l2_penalty(w)</span><br><span class="line">            l.backward()</span><br><span class="line">            d2l.sgd([w, b], lr, batch_size)</span><br><span class="line">        train_ls.append(loss(net(train_features, w, b),</span><br><span class="line">                             train_labels).mean().asscalar())</span><br><span class="line">        test_ls.append(loss(net(test_features, w, b),</span><br><span class="line">                            test_labels).mean().asscalar())</span><br><span class="line">    d2l.semilogy(<span class="built_in">range</span>(<span class="number">1</span>, num_epochs + <span class="number">1</span>), train_ls, <span class="string">&#x27;epochs&#x27;</span>, <span class="string">&#x27;loss&#x27;</span>,</span><br><span class="line">                 <span class="built_in">range</span>(<span class="number">1</span>, num_epochs + <span class="number">1</span>), test_ls, [<span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;test&#x27;</span>])</span><br><span class="line">    print(<span class="string">&#x27;L2 norm of w:&#x27;</span>, w.norm().asscalar())</span><br></pre></td></tr></table></figure>
+<p>当<code>lambd</code>设为0时，我们没有使用权重衰减。结果训练误差远小于测试集上的误差。这是典型的过拟合现象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fit_and_plot(lambd=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/images/overfit/output_10_0.svg"></p>
+<p>使用权重衰减后。可以看出，训练误差虽然有所提高，但测试集上的误差有所下降。过拟合现象得到一定程度的缓解。另外，权重参数的𝐿2L2范数比不使用权重衰减时的更小，此时的权重参数更接近0。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fit_and_plot(lambd=<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/images/overfit/output_12_0.svg"></p>
+<h2><span id="jian-ji-shi-xian">简洁实现</span><a href="#jian-ji-shi-xian" class="header-anchor"> </a></h2>
+<p>这里我们直接在构造<code>Trainer</code>实例时通过<code>wd</code>参数来指定权重衰减超参数。默认下，Gluon会对权重和偏差同时衰减。我们可以分别对权重和偏差构造<code>Trainer</code>实例，从而只对权重衰减。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fit_and_plot_gluon</span>(<span class="params">wd</span>):</span></span><br><span class="line">    net = nn.Sequential()</span><br><span class="line">    net.add(nn.Dense(<span class="number">1</span>))</span><br><span class="line">    net.initialize(init.Normal(sigma=<span class="number">1</span>))</span><br><span class="line">    <span class="comment"># 对权重参数衰减。权重名称一般是以weight结尾</span></span><br><span class="line">    trainer_w = gluon.Trainer(net.collect_params(<span class="string">&#x27;.*weight&#x27;</span>), <span class="string">&#x27;sgd&#x27;</span>,</span><br><span class="line">                              &#123;<span class="string">&#x27;learning_rate&#x27;</span>: lr, <span class="string">&#x27;wd&#x27;</span>: wd&#125;)</span><br><span class="line">    <span class="comment"># 不对偏差参数衰减。偏差名称一般是以bias结尾</span></span><br><span class="line">    trainer_b = gluon.Trainer(net.collect_params(<span class="string">&#x27;.*bias&#x27;</span>), <span class="string">&#x27;sgd&#x27;</span>,</span><br><span class="line">                              &#123;<span class="string">&#x27;learning_rate&#x27;</span>: lr&#125;)</span><br><span class="line">    train_ls, test_ls = [], []</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> train_iter:</span><br><span class="line">            <span class="keyword">with</span> autograd.record():</span><br><span class="line">                l = loss(net(X), y)</span><br><span class="line">            l.backward()</span><br><span class="line">            <span class="comment"># 对两个Trainer实例分别调用step函数，从而分别更新权重和偏差</span></span><br><span class="line">            trainer_w.step(batch_size)</span><br><span class="line">            trainer_b.step(batch_size)</span><br><span class="line">        train_ls.append(loss(net(train_features),</span><br><span class="line">                             train_labels).mean().asscalar())</span><br><span class="line">        test_ls.append(loss(net(test_features),</span><br><span class="line">                            test_labels).mean().asscalar())</span><br><span class="line">    <span class="comment"># plot X and log(y)</span></span><br><span class="line">    d2l.semilogy(<span class="built_in">range</span>(<span class="number">1</span>, num_epochs + <span class="number">1</span>), train_ls, <span class="string">&#x27;epochs&#x27;</span>, <span class="string">&#x27;loss&#x27;</span>,</span><br><span class="line">                 <span class="built_in">range</span>(<span class="number">1</span>, num_epochs + <span class="number">1</span>), test_ls, [<span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;test&#x27;</span>])</span><br><span class="line">    print(<span class="string">&#x27;L2 norm of w:&#x27;</span>, net[<span class="number">0</span>].weight.data().norm().asscalar())</span><br></pre></td></tr></table></figure>
+<h1><span id="diu-qi-fa">丢弃法</span><a href="#diu-qi-fa" class="header-anchor"> </a></h1>
+<p>深度学习模型常常使用丢弃法（dropout） 来应对过拟合问题。丢弃法有一些不同的变体。本节中提到的丢弃法特指<strong>倒置丢弃法</strong>（inverted dropout）。</p>
+<p>一个单隐藏层的多层感知机。其中输入个数为4，隐藏单元个数为5，且隐藏单元<span class="math inline">\(h_i\)</span>（<span class="math inline">\(i=1, \ldots, 5\)</span>）的计算表达式为</p>
+<p><span class="math display">\[h_i = \phi\left(x_1 w_{1i} + x_2 w_{2i} + x_3 w_{3i} + x_4 w_{4i} + b_i\right),\]</span></p>
+<p>这里<span class="math inline">\(\phi\)</span>是激活函数，<span class="math inline">\(x_1, \ldots, x_4\)</span>是输入，隐藏单元<span class="math inline">\(i\)</span>的权重参数为<span class="math inline">\(w_{1i}, \ldots, w_{4i}\)</span>，偏差参数为<span class="math inline">\(b_i\)</span>。当对该隐藏层使用丢弃法时，<strong>该层的隐藏单元将有一定概率被丢弃掉</strong>。设丢弃概率为<span class="math inline">\(p\)</span>， 那么有<span class="math inline">\(p\)</span>的概率<span class="math inline">\(h_i\)</span>会被清零，有<span class="math inline">\(1-p\)</span>的概率<span class="math inline">\(h_i\)</span>会除以<span class="math inline">\(1-p\)</span>做拉伸。丢弃概率是丢弃法的超参数。具体来说，设随机变量<span class="math inline">\(\xi_i\)</span>为0和1的概率分别为<span class="math inline">\(p\)</span>和<span class="math inline">\(1-p\)</span>。使用丢弃法时我们计算新的隐藏单元<span class="math inline">\(h_i&#39;\)</span></p>
+<p><span class="math display">\[h_i&#39; = \frac{\xi_i}{1-p} h_i.\]</span></p>
+<p>由于<span class="math inline">\(E(\xi_i) = 1-p\)</span>，因此</p>
+<p><span class="math display">\[E(h_i&#39;) = \frac{E(\xi_i)}{1-p}h_i = h_i.\]</span></p>
+<p>即<strong>丢弃法不改变其输入的期望值</strong>。让我们对图3.3中的隐藏层使用丢弃法，一种可能的结果如图3.5所示，其中<span class="math inline">\(h_2\)</span>和<span class="math inline">\(h_5\)</span>被清零。这时输出值的计算不再依赖<span class="math inline">\(h_2\)</span>和<span class="math inline">\(h_5\)</span>，在反向传播时，与这两个隐藏单元相关的权重的梯度均为0。由于在训练中隐藏层神经元的丢弃是随机的，即<span class="math inline">\(h_1, \ldots, h_5\)</span>都有可能被清零，<strong>输出层的计算无法过度依赖<span class="math inline">\(h_1, \ldots, h_5\)</span>中的任一个</strong>，从而在训练模型时<strong>起到正则化的作用</strong>，并可以用来应对过拟合。在<strong>测试模型时，我们为了拿到更加确定性的结果，一般不使用丢弃法</strong>。</p>
+<p><img src="/images/overfit/dropout.svg"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> autograd, gluon, init, nd</span><br><span class="line"><span class="keyword">from</span> mxnet.gluon <span class="keyword">import</span> loss <span class="keyword">as</span> gloss, nn</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dropout</span>(<span class="params">X, drop_prob</span>):</span></span><br><span class="line">    <span class="keyword">assert</span> <span class="number">0</span> &lt;= drop_prob &lt;= <span class="number">1</span></span><br><span class="line">    keep_prob = <span class="number">1</span> - drop_prob</span><br><span class="line">    <span class="comment"># 这种情况下把全部元素都丢弃</span></span><br><span class="line">    <span class="keyword">if</span> keep_prob == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> X.zeros_like()</span><br><span class="line">    mask = nd.random.uniform(<span class="number">0</span>, <span class="number">1</span>, X.shape) &lt; keep_prob</span><br><span class="line">    <span class="keyword">return</span> mask * X / keep_prob</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">X = nd.arange(<span class="number">16</span>).reshape((<span class="number">2</span>, <span class="number">8</span>))</span><br><span class="line">dropout(X, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">[[ <span class="number">0.</span>  <span class="number">1.</span>  <span class="number">2.</span>  <span class="number">3.</span>  <span class="number">4.</span>  <span class="number">5.</span>  <span class="number">6.</span>  <span class="number">7.</span>]</span><br><span class="line"> [ <span class="number">8.</span>  <span class="number">9.</span> <span class="number">10.</span> <span class="number">11.</span> <span class="number">12.</span> <span class="number">13.</span> <span class="number">14.</span> <span class="number">15.</span>]]</span><br><span class="line">&lt;NDArray 2x8 @cpu(<span class="number">0</span>)&gt;</span><br><span class="line"></span><br><span class="line">dropout(X, <span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">[[ <span class="number">0.</span>  <span class="number">2.</span>  <span class="number">4.</span>  <span class="number">6.</span>  <span class="number">0.</span>  <span class="number">0.</span>  <span class="number">0.</span> <span class="number">14.</span>]</span><br><span class="line"> [ <span class="number">0.</span> <span class="number">18.</span>  <span class="number">0.</span>  <span class="number">0.</span> <span class="number">24.</span> <span class="number">26.</span> <span class="number">28.</span>  <span class="number">0.</span>]]</span><br><span class="line">&lt;NDArray 2x8 @cpu(<span class="number">0</span>)&gt;</span><br><span class="line"></span><br><span class="line">dropout(X, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">[[<span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span>]</span><br><span class="line"> [<span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span> <span class="number">0.</span>]]</span><br><span class="line">&lt;NDArray 2x8 @cpu(<span class="number">0</span>)&gt;</span><br></pre></td></tr></table></figure>
+<p>我们使用Fashion-MNIST数据集。我们将定义一个包含两个隐藏层的多层感知机，其中两个隐藏层的输出个数都是256。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">num_inputs, num_outputs, num_hiddens1, num_hiddens2 = <span class="number">784</span>, <span class="number">10</span>, <span class="number">256</span>, <span class="number">256</span></span><br><span class="line"></span><br><span class="line">W1 = nd.random.normal(scale=<span class="number">0.01</span>, shape=(num_inputs, num_hiddens1))</span><br><span class="line">b1 = nd.zeros(num_hiddens1)</span><br><span class="line">W2 = nd.random.normal(scale=<span class="number">0.01</span>, shape=(num_hiddens1, num_hiddens2))</span><br><span class="line">b2 = nd.zeros(num_hiddens2)</span><br><span class="line">W3 = nd.random.normal(scale=<span class="number">0.01</span>, shape=(num_hiddens2, num_outputs))</span><br><span class="line">b3 = nd.zeros(num_outputs)</span><br><span class="line"></span><br><span class="line">params = [W1, b1, W2, b2, W3, b3]</span><br><span class="line"><span class="keyword">for</span> param <span class="keyword">in</span> params:</span><br><span class="line">    param.attach_grad()</span><br></pre></td></tr></table></figure>
+<p>下面定义的模型将全连接层和激活函数ReLU串起来，并对每个激活函数的输出使用丢弃法。我们可以分别设置各个层的丢弃概率。通常的建议是把<strong>靠近输入层的丢弃概率设得小一点</strong>。在这个实验中，我们把第一个隐藏层的丢弃概率设为0.2，把第二个隐藏层的丢弃概率设为0.5。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">drop_prob1, drop_prob2 = <span class="number">0.2</span>, <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">net</span>(<span class="params">X</span>):</span></span><br><span class="line">    X = X.reshape((-<span class="number">1</span>, num_inputs))</span><br><span class="line">    H1 = (nd.dot(X, W1) + b1).relu()</span><br><span class="line">    <span class="keyword">if</span> autograd.is_training():  <span class="comment"># 只在训练模型时使用丢弃法</span></span><br><span class="line">        H1 = dropout(H1, drop_prob1)  <span class="comment"># 在第一层全连接后添加丢弃层</span></span><br><span class="line">    H2 = (nd.dot(H1, W2) + b2).relu()</span><br><span class="line">    <span class="keyword">if</span> autograd.is_training():</span><br><span class="line">        H2 = dropout(H2, drop_prob2)  <span class="comment"># 在第二层全连接后添加丢弃层</span></span><br><span class="line">    <span class="keyword">return</span> nd.dot(H2, W3) + b3</span><br></pre></td></tr></table></figure>
+<h3><span id="xun-lian-he-ce-shi-mo-xing">训练和测试模型</span><a href="#xun-lian-he-ce-shi-mo-xing" class="header-anchor"> </a></h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">num_epochs, lr, batch_size = <span class="number">5</span>, <span class="number">0.5</span>, <span class="number">256</span></span><br><span class="line">loss = gloss.SoftmaxCrossEntropyLoss()</span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)</span><br><span class="line">d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size,</span><br><span class="line">              params, lr)</span><br><span class="line"></span><br><span class="line">epoch <span class="number">1</span>, loss <span class="number">1.2550</span>, train acc <span class="number">0.519</span>, test acc <span class="number">0.766</span></span><br><span class="line">epoch <span class="number">2</span>, loss <span class="number">0.6153</span>, train acc <span class="number">0.771</span>, test acc <span class="number">0.825</span></span><br><span class="line">epoch <span class="number">3</span>, loss <span class="number">0.5646</span>, train acc <span class="number">0.798</span>, test acc <span class="number">0.830</span></span><br><span class="line">epoch <span class="number">4</span>, loss <span class="number">0.4765</span>, train acc <span class="number">0.826</span>, test acc <span class="number">0.855</span></span><br><span class="line">epoch <span class="number">5</span>, loss <span class="number">0.4496</span>, train acc <span class="number">0.835</span>, test acc <span class="number">0.862</span></span><br></pre></td></tr></table></figure>
+<h2><span id="jian-ji-shi-xian">简洁实现</span><a href="#jian-ji-shi-xian" class="header-anchor"> </a></h2>
+<p>在Gluon中，我们只需要在全连接层后添加<code>Dropout</code>层并指定丢弃概率。在训练模型时，<code>Dropout</code>层将以指定的丢弃概率随机丢弃上一层的输出元素；在测试模型时，<code>Dropout</code>层并不发挥作用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">net = nn.Sequential()</span><br><span class="line">net.add(nn.Dense(<span class="number">256</span>, activation=<span class="string">&quot;relu&quot;</span>),</span><br><span class="line">        nn.Dropout(drop_prob1),  <span class="comment"># 在第一个全连接层后添加丢弃层</span></span><br><span class="line">        nn.Dense(<span class="number">256</span>, activation=<span class="string">&quot;relu&quot;</span>),</span><br><span class="line">        nn.Dropout(drop_prob2),  <span class="comment"># 在第二个全连接层后添加丢弃层</span></span><br><span class="line">        nn.Dense(<span class="number">10</span>))</span><br><span class="line">net.initialize(init.Normal(sigma=<span class="number">0.01</span>))</span><br><span class="line">trainer = gluon.Trainer(net.collect_params(), <span class="string">&#x27;sgd&#x27;</span>, &#123;<span class="string">&#x27;learning_rate&#x27;</span>: lr&#125;)</span><br><span class="line">d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, <span class="literal">None</span>,</span><br><span class="line">              <span class="literal">None</span>, trainer)</span><br><span class="line"></span><br><span class="line">epoch <span class="number">1</span>, loss <span class="number">1.1450</span>, train acc <span class="number">0.553</span>, test acc <span class="number">0.791</span></span><br><span class="line">epoch <span class="number">2</span>, loss <span class="number">0.5792</span>, train acc <span class="number">0.786</span>, test acc <span class="number">0.832</span></span><br><span class="line">epoch <span class="number">3</span>, loss <span class="number">0.4875</span>, train acc <span class="number">0.820</span>, test acc <span class="number">0.847</span></span><br><span class="line">epoch <span class="number">4</span>, loss <span class="number">0.4436</span>, train acc <span class="number">0.839</span>, test acc <span class="number">0.858</span></span><br><span class="line">epoch <span class="number">5</span>, loss <span class="number">0.4174</span>, train acc <span class="number">0.848</span>, test acc <span class="number">0.867</span></span><br></pre></td></tr></table></figure>
+<h1><span id="xiao-jie">小结</span><a href="#xiao-jie" class="header-anchor"> </a></h1>
+<ul>
+<li>正则化通过为模型损失函数添加惩罚项使学出的模型参数值较小，是应对过拟合的常用手段。</li>
+<li>权重衰减等价于𝐿2范数正则化，通常会使学到的权重参数的元素较接近0。</li>
+<li>权重衰减可以通过Gluon的<code>wd</code>超参数来指定。</li>
+<li>可以定义多个<code>Trainer</code>实例对不同的模型参数使用不同的迭代方法。</li>
+<li>丢弃法只在训练模型时使用。</li>
+</ul>
+
+
+
+<!-- Comments -->
+<div>
+    
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+</div>
+
+
+
+    
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+          }
+        });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+            tex2jax: {
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+          });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+              var all = MathJax.Hub.getAllJax(), i;
+              for(i=0; i < all.length; i += 1) {
+                  all[i].SourceElement().parentNode.className += ' has-jax';
+              }
+          });
+      </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+<footer id="footer">
+    <div class="inner">
+        <section>
+            <h2>About</h2>
+            <div>
+                This blog is used to save the things that I have learnt from Machine Learning and Deep Learning.
+            </div>
+        </section>
+        <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+                
+                
+                
+                
+                
+                    <li><a href="https://github.com/yeliyang/" class="icon style2 fa-github" target="_blank" ><span class="label">GitHub</span></a></li>
+                
+                
+                
+                
+                
+                    <li><a href="\#" class="icon style2 fa-envelope-o" target="_blank" ><span class="label">Email</span></a></li>
+                
+                
+                    <li><a href="\#" class="icon style2 fa-rss" target="_blank" ><span class="label">RSS</span></a></li>
+                
+            </ul>
+        </section>
+        <ul class="copyright">
+            <li>&copy; Untitled. All rights reserved</li>
+            <li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+            <li>Hexo: <a href="http://www.codeblocq.com/" target="_blank">Jonathan Klughertz</a></li>
+        </ul>
+    </div>
+</footer>
+    </div>
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- skel -->
+
+<script src="/js/skel.min.js"></script>
+
+
+<!-- Custom Code -->
+
+<script src="/js/util.js"></script>
+
+
+<!--[if lte IE 8]>
+
+<script src="/js/ie/respond.min.js"></script>
+
+<![endif]-->
+
+<!-- Custom Code -->
+
+<script src="/js/main.js"></script>
+
+
+<!-- Gallery -->
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'liyang';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

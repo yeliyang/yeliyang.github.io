@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--Description-->
+    
+        <meta name="description" content="引言
+循环神经网络基础知识
+
+123456nd.dot(nd.concat(X, H, dim=1), nd.concat(W_xh, W_hh, dim=0))[[ 5.0373516   2.6754622  -1.6607479  -0.40628862] [ 0.94845396  0.46">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Liyang Ye">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="循环神经网络"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="Liyang&#39;s Blog"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    <!-- Title -->
+    
+    <title>循环神经网络 - Liyang&#39;s Blog</title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/sass/main.css">
+
+
+    <!--[if lt IE 8]>
+        
+<script src="/js/ie/html5shiv.js"></script>
+
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+        
+<link rel="stylesheet" href="/sass/ie8.css">
+
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+        
+<link rel="stylesheet" href="/sass/ie9.css">
+
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Menu -->
+        <!-- Header -->
+<header id="header">
+    <div class="inner">
+
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <span class="symbol"><img src="/images/logo.svg" alt="" /></span><span class="title">Liyang's Blog</span>
+        </a>
+
+        <!-- Nav -->
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        
+            <li>
+                <a href="/">Home</a>
+            </li>
+        
+            <li>
+                <a href="/archives">Archives</a>
+            </li>
+        
+            <li>
+                <a href="/about.html">About</a>
+            </li>
+        
+    </ul>
+</nav>
+
+
+        <div id="main">
+            <div class="inner">
+
+                <!-- Main Content -->
+                
+
+    <h1 class="title">循环神经网络</h1>
+    <div class="meta">
+        
+        
+            <span class="post-count">
+           字数:
+            <a href="">7k字 |</a>  
+            </span>
+        
+        
+            <span class="post-count">
+           阅读时间:
+            <a href="">29min |</a>  
+            </span>
+        
+	<span class="post-count">发布于:2021-01-17</span>
+    </div>
+
+
+<!-- Tags -->
+
+
+<div class="tags">
+    <a href="/tags/MXNET/" class="button small">MXNET</a> <a href="/tags/RNN/" class="button small">RNN</a> <a href="/tags/NLP/" class="button small">NLP</a> <a href="/tags/困惑度/" class="button small">困惑度</a>
+</div>
+
+
+
+
+    <span class="image main"><img src="/images/rnn/rnn_hero.jpg" alt="" /></span>
+
+
+<!-- Gallery -->
+
+
+<!-- Content -->
+<div class="tocStart">
+
+</div>
+<!-- toc -->
+<ul>
+<li><a href="#yin-yan">引言</a></li>
+<li><a href="#xun-huan-shen-jing-wang-luo-ji-chu-zhi-shi">循环神经网络基础知识</a>
+<ul>
+<li><a href="#hexopostrendercodeblock-figure-class-highlight-python-table-tr-td-class-gutter-pre-span-class-line-1-span-br-span-class-line-2-span-br-span-class-line-3-span-br-span-class-line-4-span-br-span-class-line-5-span-br-span-class-line-6-span-br-pre-td-td-class-code-pre-span-class-line-nd-dot-nd-concat-x-h-dim-span-class-number-1-span-nd-concat-w-xh-w-hh-dim-span-class-number-0-span-span-br-span-class-line-span-br-span-class-line-span-class-number-5-0373516-span-span-class-number-2-6754622-span-span-class-number-1-6607479-span-span-class-number-0-40628862-span-span-br-span-class-line-span-class-number-0-94845396-span-span-class-number-0-46941754-span-span-class-number-1-1866102-span-span-class-number-1-1806769-span-span-br-span-class-line-span-class-number-1-1514019-span-span-class-number-0-83730274-span-span-class-number-2-1974368-span-span-class-number-5-2480164-span-span-br-span-class-line-lt-ndarray-3x4-cpu-span-class-number-0-span-gt-span-br-pre-td-tr-table-figure-hexopostrendercodeblock"><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">nd.dot(nd.concat(X, H, dim=<span class="number">1</span>), nd.concat(W_xh, W_hh, dim=<span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">[[ <span class="number">5.0373516</span>   <span class="number">2.6754622</span>  -<span class="number">1.6607479</span>  -<span class="number">0.40628862</span>]</span><br><span class="line"> [ <span class="number">0.94845396</span>  <span class="number">0.46941754</span> -<span class="number">1.1866102</span>  -<span class="number">1.1806769</span> ]</span><br><span class="line"> [-<span class="number">1.1514019</span>   <span class="number">0.83730274</span> -<span class="number">2.1974368</span>  -<span class="number">5.2480164</span> ]]</span><br><span class="line">&lt;NDArray 3x4 @cpu(<span class="number">0</span>)&gt;</span><br></pre></td></tr></table></figure></a></li>
+<li><a href="#ying-yong-zi-fu-ji-xun-huan-shen-jing-wang-luo-de-yu-yan-mo-xing">应用：字符级循环神经网络的语言模型</a></li>
+<li><a href="#yu-chu-li-shu-ju">预处理数据</a>
+<ul>
+<li><a href="#sui-ji-cai-yang">随机采样</a></li>
+<li><a href="#xiang-lin-cai-yang">相邻采样</a></li>
+</ul></li>
+<li><a href="#mo-xing-da-jian">模型搭建</a></li>
+<li><a href="#cai-jian-ti-du">裁剪梯度</a></li>
+<li><a href="#kun-huo-du">困惑度</a></li>
+</ul></li>
+<li><a href="#jian-ji-shi-xian">简洁实现</a></li>
+<li><a href="#xiao-jie">小结</a></li>
+</ul>
+<!-- tocstop -->
+<div class="tocEnd">
+
+</div>
+<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1>
+<p>语言模型在自然语言处理中是非常重要的技术。为了计算语言模型，我们需要计算词的概率，以及一个词在给定前几个词的情况下的条件概率，即语言模型参数。一段含有4个词的文本序列的概率为：</p>
+<p><span class="math display">\[
+P(w_1, w_2, w_3, w_4) =  P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_1, w_2) P(w_4 \mid w_1, w_2, w_3).
+\]</span> 词的概率可以通过该词在训练数据集中的相对词频来计算。例如，<span class="math inline">\(P(w_1)\)</span>可以计算为<span class="math inline">\(w_1\)</span>在训练数据集中的词频（词出现的次数）与训练数据集的总词数之比。因此，根据条件概率定义，<strong>一个词在给定前几个词的情况下的条件概率也可以通过训练数据集中的相对词频计算</strong>。例如，<span class="math inline">\(P(w_2 \mid w_1)\)</span>可以计算为<span class="math inline">\(w_1, w_2\)</span>两词相邻的频率与<span class="math inline">\(w_1\)</span>词频的比值，因为该比值即<span class="math inline">\(P(w_1, w_2)\)</span>与<span class="math inline">\(P(w_1)\)</span>之比；而<span class="math inline">\(P(w_3 \mid w_1, w_2)\)</span>同理可以计算为<span class="math inline">\(w_1\)</span>、<span class="math inline">\(w_2\)</span>和<span class="math inline">\(w_3\)</span>三词相邻的频率与<span class="math inline">\(w_1\)</span>和<span class="math inline">\(w_2\)</span>两词相邻的频率的比值。以此类推。</p>
+<p>但是当序列长度增加时，计算和存储多个词共同出现的概率的复杂度会呈指数级增加。<strong><span class="math inline">\(n\)</span>元语法通过马尔可夫假设</strong>（虽然并不一定成立）<strong>简化了语言模型的计算</strong>。这里的马尔可夫假设是指<strong>一个词的出现只与前面<span class="math inline">\(n\)</span>个词相关</strong>，即<span class="math inline">\(n\)</span>阶马尔可夫链（Markov chain of order <span class="math inline">\(n\)</span>）。如果<span class="math inline">\(n=1\)</span>，那么有<span class="math inline">\(P(w_3 \mid w_1, w_2) = P(w_3 \mid w_2)\)</span>。如果基于<span class="math inline">\(n-1\)</span>阶马尔可夫链，我们可以将语言模型改写为</p>
+<p><span class="math display">\[
+P(w_1, w_2, \ldots, w_T) \approx \prod_{t=1}^T P(w_t \mid w_{t-(n-1)}, \ldots, w_{t-1}) .
+\]</span></p>
+<p>以上也叫<span class="math inline">\(n\)</span>元语法（<span class="math inline">\(n\)</span>-grams）。它是基于<span class="math inline">\(n - 1\)</span>阶马尔可夫链的概率语言模型。当<span class="math inline">\(n\)</span>分别为1、2和3时，我们将其分别称作一元语法（unigram）、二元语法（bigram）和三元语法（trigram）。例如，长度为4的序列<span class="math inline">\(w_1, w_2, w_3, w_4\)</span>在一元语法、二元语法和三元语法中的概率分别为</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(w_1, w_2, w_3, w_4) &amp;=  P(w_1) P(w_2) P(w_3) P(w_4) ,\\
+P(w_1, w_2, w_3, w_4) &amp;=  P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_2) P(w_4 \mid w_3) ,\\
+P(w_1, w_2, w_3, w_4) &amp;=  P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_1, w_2) P(w_4 \mid w_2, w_3) .
+\end{aligned}
+\]</span></p>
+<p><strong>当<span class="math inline">\(n\)</span>较小时，<span class="math inline">\(n\)</span>元语法往往并不准确</strong>。例如，<strong>在一元语法中，由三个词组成的句子“你走先”和“你先走”的概率是一样的</strong>。然而，当<span class="math inline">\(n\)</span>较大时，<span class="math inline">\(n\)</span>元语法需要计算并存储大量的词频和多词相邻频率。</p>
+<p><span class="math inline">\(n\)</span>元语法中，时间步<span class="math inline">\(t\)</span>的词<span class="math inline">\(w_t\)</span>基于前面所有词的条件概率只考虑了最近时间步的<span class="math inline">\(n-1\)</span>个词。如果要考虑比<span class="math inline">\(t-(n-1)\)</span>更早时间步的词对<span class="math inline">\(w_t\)</span>的可能影响，我们需要增大<span class="math inline">\(n\)</span>。但这样模型参数的数量将随之呈指数级增长（可参考上一节的练习）。</p>
+<h1><span id="xun-huan-shen-jing-wang-luo-ji-chu-zhi-shi">循环神经网络基础知识</span><a href="#xun-huan-shen-jing-wang-luo-ji-chu-zhi-shi" class="header-anchor"> </a></h1>
+<p>循环神经网络的出现很好的平衡了这个问题。它并非刚性地记忆所有固定长度的序列，而是<strong>通过隐藏状态来存储之前时间步的信息</strong>。我们通过添加隐藏状态来将多层感知机变成循环神经网络。</p>
+<p>我们考虑输入数据存在时间相关性的情况。假设<span class="math inline">\(\boldsymbol{X}t \in \mathbb{R}^{n \times d}\)</span>是序列中时间步<span class="math inline">\(t\)</span>的小批量输入，<span class="math inline">\(\boldsymbol{H}t \in \mathbb{R}^{n \times h}\)</span>是该时间步的隐藏变量。与多层感知机不同的是，这里我们保存上一时间步的隐藏变量<span class="math inline">\(\boldsymbol{H}{t-1}\)</span>，并引入一个新的权重参数<span class="math inline">\(\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}\)</span>，该参数用来描述在当前时间步如何使用上一时间步的隐藏变量。具体来说，时间步<span class="math inline">\(t\)</span>的隐藏变量的计算由当前时间步的输入和上一时间步的隐藏变量共同决定： <span class="math display">\[
+\boldsymbol{H}t = \phi(\boldsymbol{X}_t \boldsymbol{W}_{xh} + \boldsymbol{H}_{t-1} \boldsymbol{W}_{hh}  + \boldsymbol{b}_h)
+\]</span> 与多层感知机相比，我们在这里添加了<span class="math inline">\(\boldsymbol{H}{t-1} \boldsymbol{W}{hh}\)</span>一项。由上式中相邻时间步的隐藏变量<span class="math inline">\(\boldsymbol{H}_t\)</span>和<span class="math inline">\(\boldsymbol{H}{t-1}\)</span>之间的关系可知，<strong>这里的隐藏变量能够捕捉截至当前时间步的序列的历史信息，就像是神经网络当前时间步的状态或记忆一样</strong>。因此，<strong>该隐藏变量也称为隐藏状态</strong>。<strong>由于隐藏状态在当前时间步的定义使用了上一时间步的隐藏状态，上式的计算是循环的</strong>。使用循环计算的网络即循环神经网络（recurrent neural network）。</p>
+<p>循环神经网络有很多种不同的构造方法。含上式所定义的隐藏状态的循环神经网络是极为常见的一种。在时间步<span class="math inline">\(t\)</span>，输出层的输出和多层感知机中的计算类似：</p>
+<p><span class="math display">\[
+\boldsymbol{O}_t = \boldsymbol{H}_t \boldsymbol{W}_{hq} + \boldsymbol{b}_q
+\]</span> 循环神经网络的参数包括隐藏层的权重<span class="math inline">\(\boldsymbol{W}{xh} \in \mathbb{R}^{d \times h}\)</span>、<span class="math inline">\(\boldsymbol{W}{hh} \in \mathbb{R}^{h \times h}\)</span>和偏差 <span class="math inline">\(\boldsymbol{b}h \in \mathbb{R}^{1 \times h}\)</span>，以及输出层的权重<span class="math inline">\(\boldsymbol{W}{hq} \in \mathbb{R}^{h \times q}\)</span>和偏差<span class="math inline">\(\boldsymbol{b}_q \in \mathbb{R}^{1 \times q}\)</span>。值得一提的是，即便在不同时间步，循环神经网络也始终使用这些模型参数。因此，<strong>循环神经网络模型参数的数量不随时间步的增加而增长</strong>。</p>
+<p>下图展示了循环神经网络在3个相邻时间步的计算逻辑。在时间步<span class="math inline">\(t\)</span>，隐藏状态的计算可以看成是将输入<span class="math inline">\(\boldsymbol{X}t\)</span>和前一时间步隐藏状态<span class="math inline">\(\boldsymbol{H}{t-1}\)</span>连结后输入一个激活函数为<span class="math inline">\(\phi\)</span>的全连接层。该全连接层的输出就是当前时间步的隐藏状态<span class="math inline">\(\boldsymbol{H}t\)</span>，且模型参数为<span class="math inline">\(\boldsymbol{W}{xh}\)</span>与<span class="math inline">\(\boldsymbol{W}{hh}\)</span>的连结，偏差为<span class="math inline">\(\boldsymbol{b}h\)</span>。当前时间步<span class="math inline">\(t\)</span>的隐藏状态<span class="math inline">\(\boldsymbol{H}t\)</span>将参与下一个时间步<span class="math inline">\(t+1\)</span>的隐藏状态<span class="math inline">\(\boldsymbol{H}_{t+1}\)</span>的计算，并输入到当前时间步的全连接输出层。</p>
+<figure>
+<img src="/images/rnn/rnn.svg" alt="含隐藏状态的循环神经网络"><figcaption>含隐藏状态的循环神经网络</figcaption>
+</figure>
+<p>隐藏状态中<span class="math inline">\(\boldsymbol{X}t \boldsymbol{W}{xh} + \boldsymbol{H}{t-1} \boldsymbol{W}{hh}\)</span>的计算等价于<span class="math inline">\(\boldsymbol{X}t\)</span>与<span class="math inline">\(\boldsymbol{H}{t-1}\)</span>连结后的矩阵乘以<span class="math inline">\(\boldsymbol{W}{xh}\)</span>与<span class="math inline">\(\boldsymbol{W}_{hh}\)</span>连结后的矩阵。接下来，我们用一个具体的例子来验证这一点。首先，我们构造矩阵<code>X</code>、<code>W_xh</code>、<code>H</code>和<code>W_hh</code>，它们的形状分别为(3, 1)、(1, 4)、(3, 4)和(4, 4)。将<code>X</code>与<code>W_xh</code>、<code>H</code>与<code>W_hh</code>分别相乘，再把两个乘法运算的结果相加，得到形状为(3, 4)的矩阵。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> nd</span><br><span class="line"></span><br><span class="line">X, W_xh = nd.random.normal(shape=(<span class="number">3</span>, <span class="number">1</span>)), nd.random.normal(shape=(<span class="number">1</span>, <span class="number">4</span>))</span><br><span class="line">H, W_hh = nd.random.normal(shape=(<span class="number">3</span>, <span class="number">4</span>)), nd.random.normal(shape=(<span class="number">4</span>, <span class="number">4</span>))</span><br><span class="line">nd.dot(X, W_xh) + nd.dot(H, W_hh)</span><br><span class="line"></span><br><span class="line">[[ <span class="number">5.0373516</span>   <span class="number">2.6754622</span>  -<span class="number">1.6607479</span>  -<span class="number">0.40628886</span>]</span><br><span class="line"> [ <span class="number">0.948454</span>    <span class="number">0.46941757</span> -<span class="number">1.1866101</span>  -<span class="number">1.180677</span>  ]</span><br><span class="line"> [-<span class="number">1.1514019</span>   <span class="number">0.8373027</span>  -<span class="number">2.197437</span>   -<span class="number">5.2480164</span> ]]</span><br><span class="line">&lt;NDArray 3x4 @cpu(<span class="number">0</span>)&gt;</span><br></pre></td></tr></table></figure>
+<p>将矩阵<code>X</code>和<code>H</code>按列（维度1）连结，连结后的矩阵形状为(3, 5)。可见，连结后矩阵在维度1的长度为矩阵<code>X</code>和<code>H</code>在维度1的长度之和（1+41+4）。然后，将矩阵<code>W_xh</code>和<code>W_hh</code>按行（维度0）连结，连结后的矩阵形状为(5, 4)。最后将两个连结后的矩阵相乘，得到与上面代码输出相同的形状为(3, 4)的矩阵。</p>
+<h2><span id="123456nd-dot-nd-concat-x-h-dim-1-nd-concat-w-xh-w-hh-dim-0-5-0373516-2-6754622-1-6607479-0-40628862-0-94845396-0-46941754-1-1866102-1-1806769-1-1514019-0-83730274-2-1974368-5-2480164-lt-ndarray-3x4-cpu-0-gt"><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">nd.dot(nd.concat(X, H, dim=<span class="number">1</span>), nd.concat(W_xh, W_hh, dim=<span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">[[ <span class="number">5.0373516</span>   <span class="number">2.6754622</span>  -<span class="number">1.6607479</span>  -<span class="number">0.40628862</span>]</span><br><span class="line"> [ <span class="number">0.94845396</span>  <span class="number">0.46941754</span> -<span class="number">1.1866102</span>  -<span class="number">1.1806769</span> ]</span><br><span class="line"> [-<span class="number">1.1514019</span>   <span class="number">0.83730274</span> -<span class="number">2.1974368</span>  -<span class="number">5.2480164</span> ]]</span><br><span class="line">&lt;NDArray 3x4 @cpu(<span class="number">0</span>)&gt;</span><br></pre></td></tr></table></figure></span><a href="#123456nd-dot-nd-concat-x-h-dim-1-nd-concat-w-xh-w-hh-dim-0-5-0373516-2-6754622-1-6607479-0-40628862-0-94845396-0-46941754-1-1866102-1-1806769-1-1514019-0-83730274-2-1974368-5-2480164-lt-ndarray-3x4-cpu-0-gt" class="header-anchor"> </a></h2>
+<h2><span id="ying-yong-zi-fu-ji-xun-huan-shen-jing-wang-luo-de-yu-yan-mo-xing">应用：字符级循环神经网络的语言模型</span><a href="#ying-yong-zi-fu-ji-xun-huan-shen-jing-wang-luo-de-yu-yan-mo-xing" class="header-anchor"> </a></h2>
+<p>设小批量中样本数为1，文本序列为“想”“要”“有”“直”“升”“机”。下图演示了如何使用循环神经网络基于当前和过去的字符来预测下一个字符。在训练时，我们<strong>对每个时间步的输出层输出使用softmax运算</strong>，然后<strong>使用交叉熵损失函数来计算它与标签的误差</strong>。在图中，由于隐藏层中隐藏状态的循环计算，<strong>时间步3的输出<span class="math inline">\(\boldsymbol{O}_3\)</span>取决于文本序列“想”“要”“有”</strong>。 由于训练数据中该序列的下一个词为“直”，<strong>时间步3的损失将取决于该时间步基于序列“想”“要”“有”生成下一个词的概率分布与该时间步的标签“直”</strong>。</p>
+<p><img src="/images/rnn/rnn-train.svg"></p>
+<p>因为每个输入词是一个字符，因此这个模型被称为字符级循环神经网络（character-level recurrent neural network）。因为<strong>不同字符的个数远小于不同词的个数</strong>（对于英文尤其如此），所以<strong>字符级循环神经网络的计算通常更加简单</strong>。</p>
+<h2><span id="yu-chu-li-shu-ju">预处理数据</span><a href="#yu-chu-li-shu-ju" class="header-anchor"> </a></h2>
+<p>预处理一个语言模型数据集，并将其转换成字符级循环神经网络所需要的输入格式。</p>
+<ol type="1">
+<li><p><strong>建立字符索引</strong>。我们将每个字符映射成一个从0开始的连续整数，又称索引，来方便之后的数据处理。为了得到索引，我们将数据集里所有不同字符取出来，然后将其逐一映射到索引来构造词典。词典中不同字符的个数，又称词典大小。之后，将训练数据集中每个字符转化为索引。</p></li>
+<li><p><strong>时序数据的采样</strong>。在训练中我们需要每次随机读取小批量样本和标签。与之前不同的是，时序数据的一个样本通常包含连续的字符。我们有两种方式对时序数据进行采样，分别是<strong>随机采样</strong>和<strong>相邻采样</strong>。</p>
+<h3><span id="sui-ji-cai-yang">随机采样</span><a href="#sui-ji-cai-yang" class="header-anchor"> </a></h3>
+<p>每次从数据里随机采样一个小批量。其中批量大小<code>batch_size</code>指每个小批量的样本数，<code>num_steps</code>为每个样本所包含的时间步数。 在随机采样中，每个样本是原始序列上任意截取的一段序列。相邻的两个随机小批量在原始序列上的位置不一定相毗邻。因此，我们无法用一个小批量最终时间步的隐藏状态来初始化下一个小批量的隐藏状态。<strong>在训练模型时，每次随机采样前都需要重新初始化隐藏状态</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">data_iter_random</span>(<span class="params">corpus_indices, batch_size, num_steps, ctx=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="comment"># 减1是因为输出的索引是相应输入的索引加1</span></span><br><span class="line">    num_examples = (<span class="built_in">len</span>(corpus_indices) - <span class="number">1</span>) // num_steps</span><br><span class="line">    epoch_size = num_examples // batch_size</span><br><span class="line">    example_indices = <span class="built_in">list</span>(<span class="built_in">range</span>(num_examples))</span><br><span class="line">    random.shuffle(example_indices)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 返回从pos开始的长为num_steps的序列</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_data</span>(<span class="params">pos</span>):</span></span><br><span class="line">        <span class="keyword">return</span> corpus_indices[pos: pos + num_steps]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(epoch_size):</span><br><span class="line">        <span class="comment"># 每次读取batch_size个随机样本</span></span><br><span class="line">        i = i * batch_size</span><br><span class="line">        batch_indices = example_indices[i: i + batch_size]</span><br><span class="line">        X = [_data(j * num_steps) <span class="keyword">for</span> j <span class="keyword">in</span> batch_indices]</span><br><span class="line">        Y = [_data(j * num_steps + <span class="number">1</span>) <span class="keyword">for</span> j <span class="keyword">in</span> batch_indices]</span><br><span class="line">        <span class="keyword">yield</span> nd.array(X, ctx), nd.array(Y, ctx)</span><br></pre></td></tr></table></figure>
+<p>设批量大小和时间步数分别为2和6。打印随机采样每次读取的小批量样本的输入<code>X</code>和标签<code>Y</code>。可见，<strong>相邻的两个随机小批量在原始序列上的位置不一定相毗邻</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">my_seq = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">30</span>))</span><br><span class="line"><span class="keyword">for</span> X, Y <span class="keyword">in</span> data_iter_random(my_seq, batch_size=<span class="number">2</span>, num_steps=<span class="number">6</span>):</span><br><span class="line">    print(<span class="string">&#x27;X: &#x27;</span>, X, <span class="string">&#x27;\nY:&#x27;</span>, Y, <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">X:  </span><br><span class="line">[[<span class="number">18.</span> <span class="number">19.</span> <span class="number">20.</span> <span class="number">21.</span> <span class="number">22.</span> <span class="number">23.</span>]</span><br><span class="line"> [ <span class="number">0.</span>  <span class="number">1.</span>  <span class="number">2.</span>  <span class="number">3.</span>  <span class="number">4.</span>  <span class="number">5.</span>]]</span><br><span class="line">&lt;NDArray 2x6 @cpu(<span class="number">0</span>)&gt; </span><br><span class="line">Y: </span><br><span class="line">[[<span class="number">19.</span> <span class="number">20.</span> <span class="number">21.</span> <span class="number">22.</span> <span class="number">23.</span> <span class="number">24.</span>]</span><br><span class="line"> [ <span class="number">1.</span>  <span class="number">2.</span>  <span class="number">3.</span>  <span class="number">4.</span>  <span class="number">5.</span>  <span class="number">6.</span>]]</span><br><span class="line">&lt;NDArray 2x6 @cpu(<span class="number">0</span>)&gt; </span><br><span class="line"></span><br><span class="line">X:  </span><br><span class="line">[[ <span class="number">6.</span>  <span class="number">7.</span>  <span class="number">8.</span>  <span class="number">9.</span> <span class="number">10.</span> <span class="number">11.</span>]</span><br><span class="line"> [<span class="number">12.</span> <span class="number">13.</span> <span class="number">14.</span> <span class="number">15.</span> <span class="number">16.</span> <span class="number">17.</span>]]</span><br><span class="line">&lt;NDArray 2x6 @cpu(<span class="number">0</span>)&gt; </span><br><span class="line">Y: </span><br><span class="line">[[ <span class="number">7.</span>  <span class="number">8.</span>  <span class="number">9.</span> <span class="number">10.</span> <span class="number">11.</span> <span class="number">12.</span>]</span><br><span class="line"> [<span class="number">13.</span> <span class="number">14.</span> <span class="number">15.</span> <span class="number">16.</span> <span class="number">17.</span> <span class="number">18.</span>]]</span><br><span class="line">&lt;NDArray 2x6 @cpu(<span class="number">0</span>)&gt; </span><br></pre></td></tr></table></figure>
+<h3><span id="xiang-lin-cai-yang">相邻采样</span><a href="#xiang-lin-cai-yang" class="header-anchor"> </a></h3>
+<p>除对原始序列做随机采样之外，我们还可以令相邻的两个随机小批量在原始序列上的位置相毗邻。这时候，我们就可以用一个小批量最终时间步的隐藏状态来初始化下一个小批量的隐藏状态，从而使下一个小批量的输出也取决于当前小批量的输入，并如此循环下去。<strong>这对实现循环神经网络造成了两方面影响：一方面， 在训练模型时，我们只需在每一个迭代周期开始时初始化隐藏状态；另一方面，当多个相邻小批量通过传递隐藏状态串联起来时，模型参数的梯度计算将依赖所有串联起来的小批量序列。</strong>同一迭代周期中，<strong>随着迭代次数的增加，梯度的计算开销会越来越大。</strong> 为了使模型参数的梯度计算只依赖一次迭代读取的小批量序列，我们可以在每次读取小批量前将隐藏状态从计算图中分离出来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">data_iter_consecutive</span>(<span class="params">corpus_indices, batch_size, num_steps, ctx=<span class="literal">None</span></span>):</span></span><br><span class="line">    corpus_indices = nd.array(corpus_indices, ctx=ctx)</span><br><span class="line">    data_len = <span class="built_in">len</span>(corpus_indices)</span><br><span class="line">    batch_len = data_len // batch_size</span><br><span class="line">    indices = corpus_indices[<span class="number">0</span>: batch_size*batch_len].reshape((</span><br><span class="line">        batch_size, batch_len))</span><br><span class="line">    epoch_size = (batch_len - <span class="number">1</span>) // num_steps</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(epoch_size):</span><br><span class="line">        i = i * num_steps</span><br><span class="line">        X = indices[:, i: i + num_steps]</span><br><span class="line">        Y = indices[:, i + <span class="number">1</span>: i + num_steps + <span class="number">1</span>]</span><br><span class="line">        <span class="keyword">yield</span> X, Y</span><br></pre></td></tr></table></figure>
+<p>同样的设置下，打印相邻采样每次读取的小批量样本的输入<code>X</code>和标签<code>Y</code>。<strong>相邻的两个随机小批量在原始序列上的位置相毗邻</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> X, Y <span class="keyword">in</span> data_iter_consecutive(my_seq, batch_size=<span class="number">2</span>, num_steps=<span class="number">6</span>):</span><br><span class="line">    print(<span class="string">&#x27;X: &#x27;</span>, X, <span class="string">&#x27;\nY:&#x27;</span>, Y, <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">X:  </span><br><span class="line">[[ <span class="number">0.</span>  <span class="number">1.</span>  <span class="number">2.</span>  <span class="number">3.</span>  <span class="number">4.</span>  <span class="number">5.</span>]</span><br><span class="line"> [<span class="number">15.</span> <span class="number">16.</span> <span class="number">17.</span> <span class="number">18.</span> <span class="number">19.</span> <span class="number">20.</span>]]</span><br><span class="line">&lt;NDArray 2x6 @cpu(<span class="number">0</span>)&gt; </span><br><span class="line">Y: </span><br><span class="line">[[ <span class="number">1.</span>  <span class="number">2.</span>  <span class="number">3.</span>  <span class="number">4.</span>  <span class="number">5.</span>  <span class="number">6.</span>]</span><br><span class="line"> [<span class="number">16.</span> <span class="number">17.</span> <span class="number">18.</span> <span class="number">19.</span> <span class="number">20.</span> <span class="number">21.</span>]]</span><br><span class="line">&lt;NDArray 2x6 @cpu(<span class="number">0</span>)&gt; </span><br><span class="line"></span><br><span class="line">X:  </span><br><span class="line">[[ <span class="number">6.</span>  <span class="number">7.</span>  <span class="number">8.</span>  <span class="number">9.</span> <span class="number">10.</span> <span class="number">11.</span>]</span><br><span class="line"> [<span class="number">21.</span> <span class="number">22.</span> <span class="number">23.</span> <span class="number">24.</span> <span class="number">25.</span> <span class="number">26.</span>]]</span><br><span class="line">&lt;NDArray 2x6 @cpu(<span class="number">0</span>)&gt; </span><br><span class="line">Y: </span><br><span class="line">[[ <span class="number">7.</span>  <span class="number">8.</span>  <span class="number">9.</span> <span class="number">10.</span> <span class="number">11.</span> <span class="number">12.</span>]</span><br><span class="line"> [<span class="number">22.</span> <span class="number">23.</span> <span class="number">24.</span> <span class="number">25.</span> <span class="number">26.</span> <span class="number">27.</span>]]</span><br><span class="line">&lt;NDArray 2x6 @cpu(<span class="number">0</span>)&gt; </span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2><span id="mo-xing-da-jian">模型搭建</span><a href="#mo-xing-da-jian" class="header-anchor"> </a></h2>
+<p>为了将词表示成向量输入到神经网络，一个简单的办法是使用one-hot向量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">to_onehot</span>(<span class="params">X, size</span>):</span>  <span class="comment"># 本函数已保存在d2lzh包中方便以后使用</span></span><br><span class="line">    <span class="keyword">return</span> [nd.one_hot(x, size) <span class="keyword">for</span> x <span class="keyword">in</span> X.T]</span><br><span class="line"></span><br><span class="line">X = nd.arange(<span class="number">10</span>).reshape((<span class="number">2</span>, <span class="number">5</span>))</span><br><span class="line">inputs = to_onehot(X, vocab_size)</span><br><span class="line"><span class="built_in">len</span>(inputs), inputs[<span class="number">0</span>].shape</span><br><span class="line"></span><br><span class="line">(<span class="number">5</span>, (<span class="number">2</span>, <span class="number">1027</span>))</span><br></pre></td></tr></table></figure>
+<p>初始化参数。隐藏单元个数 <code>num_hiddens</code>是一个超参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">num_inputs, num_hiddens, num_outputs = vocab_size, <span class="number">256</span>, vocab_size</span><br><span class="line">ctx = d2l.try_gpu()</span><br><span class="line">print(<span class="string">&#x27;will use&#x27;</span>, ctx)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_params</span>():</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_one</span>(<span class="params">shape</span>):</span></span><br><span class="line">        <span class="keyword">return</span> nd.random.normal(scale=<span class="number">0.01</span>, shape=shape, ctx=ctx)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 隐藏层参数</span></span><br><span class="line">    W_xh = _one((num_inputs, num_hiddens))</span><br><span class="line">    W_hh = _one((num_hiddens, num_hiddens))</span><br><span class="line">    b_h = nd.zeros(num_hiddens, ctx=ctx)</span><br><span class="line">    <span class="comment"># 输出层参数</span></span><br><span class="line">    W_hq = _one((num_hiddens, num_outputs))</span><br><span class="line">    b_q = nd.zeros(num_outputs, ctx=ctx)</span><br><span class="line">    <span class="comment"># 附上梯度</span></span><br><span class="line">    params = [W_xh, W_hh, b_h, W_hq, b_q]</span><br><span class="line">    <span class="keyword">for</span> param <span class="keyword">in</span> params:</span><br><span class="line">        param.attach_grad()</span><br><span class="line">    <span class="keyword">return</span> params</span><br></pre></td></tr></table></figure>
+<p>首先定义<code>init_rnn_state</code>函数来返回初始化的隐藏状态。它返回由一个形状为(批量大小, 隐藏单元个数)的值为0的<code>NDArray</code>组成的元组。使用元组是为了更便于处理隐藏状态含有多个<code>NDArray</code>的情况。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_rnn_state</span>(<span class="params">batch_size, num_hiddens, ctx</span>):</span></span><br><span class="line">    <span class="keyword">return</span> (nd.zeros(shape=(batch_size, num_hiddens), ctx=ctx), )</span><br></pre></td></tr></table></figure>
+<p>下面的<code>rnn</code>函数定义了在一个时间步里如何计算隐藏状态和输出。这里的激活函数使用了tanh函数。当元素在实数域上均匀分布时，tanh函数值的均值为0。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rnn</span>(<span class="params">inputs, state, params</span>):</span></span><br><span class="line">    <span class="comment"># inputs和outputs皆为num_steps个形状为(batch_size, vocab_size)的矩阵</span></span><br><span class="line">    W_xh, W_hh, b_h, W_hq, b_q = params</span><br><span class="line">    H, = state</span><br><span class="line">    outputs = []</span><br><span class="line">    <span class="keyword">for</span> X <span class="keyword">in</span> inputs:</span><br><span class="line">        H = nd.tanh(nd.dot(X, W_xh) + nd.dot(H, W_hh) + b_h)</span><br><span class="line">        Y = nd.dot(H, W_hq) + b_q</span><br><span class="line">        outputs.append(Y)</span><br><span class="line">    <span class="keyword">return</span> outputs, (H,)</span><br></pre></td></tr></table></figure>
+<p>以下函数基于前缀<code>prefix</code>（含有数个字符的字符串）来预测接下来的<code>num_chars</code>个字符。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict_rnn</span>(<span class="params">prefix, num_chars, rnn, params, init_rnn_state,</span></span></span><br><span class="line"><span class="function"><span class="params">                num_hiddens, vocab_size, ctx, idx_to_char, char_to_idx</span>):</span></span><br><span class="line">    state = init_rnn_state(<span class="number">1</span>, num_hiddens, ctx)</span><br><span class="line">    output = [char_to_idx[prefix[<span class="number">0</span>]]]</span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">range</span>(num_chars + <span class="built_in">len</span>(prefix) - <span class="number">1</span>):</span><br><span class="line">        <span class="comment"># 将上一时间步的输出作为当前时间步的输入</span></span><br><span class="line">        X = to_onehot(nd.array([output[-<span class="number">1</span>]], ctx=ctx), vocab_size)</span><br><span class="line">        <span class="comment"># 计算输出和更新隐藏状态</span></span><br><span class="line">        (Y, state) = rnn(X, state, params)</span><br><span class="line">        <span class="comment"># 下一个时间步的输入是prefix里的字符或者当前的最佳预测字符</span></span><br><span class="line">        <span class="keyword">if</span> t &lt; <span class="built_in">len</span>(prefix) - <span class="number">1</span>:</span><br><span class="line">            output.append(char_to_idx[prefix[t + <span class="number">1</span>]])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            output.append(<span class="built_in">int</span>(Y[<span class="number">0</span>].argmax(axis=<span class="number">1</span>).asscalar()))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join([idx_to_char[i] <span class="keyword">for</span> i <span class="keyword">in</span> output])</span><br><span class="line">  </span><br><span class="line">predict_rnn(<span class="string">&#x27;分开&#x27;</span>, <span class="number">10</span>, rnn, params, init_rnn_state, num_hiddens, vocab_size,</span><br><span class="line">            ctx, idx_to_char, char_to_idx)</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;分开状瞎口造童甩幽袭操涯&#x27;</span></span><br></pre></td></tr></table></figure>
+<h2><span id="cai-jian-ti-du">裁剪梯度</span><a href="#cai-jian-ti-du" class="header-anchor"> </a></h2>
+<p>循环神经网络中较容易出现梯度衰减或梯度爆炸。为了应对梯度爆炸，我们可以裁剪梯度（clip gradient）。假设我们把所有模型参数梯度的元素拼接成一个向量 <span class="math inline">\(\boldsymbol{g}\)</span>，并设裁剪的阈值是<span class="math inline">\(\theta\)</span>。<strong>裁剪后的梯度</strong></p>
+<p><span class="math display">\[ \min\left(\frac{\theta}{\|\boldsymbol{g}\|}, 1\right)\boldsymbol{g}\]</span></p>
+<p><strong>的<span class="math inline">\(L_2\)</span>范数不超过<span class="math inline">\(\theta\)</span></strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grad_clipping</span>(<span class="params">params, theta, ctx</span>):</span></span><br><span class="line">    norm = nd.array([<span class="number">0</span>], ctx)</span><br><span class="line">    <span class="keyword">for</span> param <span class="keyword">in</span> params:</span><br><span class="line">        norm += (param.grad ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">    norm = norm.sqrt().asscalar()</span><br><span class="line">    <span class="keyword">if</span> norm &gt; theta:</span><br><span class="line">        <span class="keyword">for</span> param <span class="keyword">in</span> params:</span><br><span class="line">            param.grad[:] *= theta / norm</span><br></pre></td></tr></table></figure>
+<h2><span id="kun-huo-du">困惑度</span><a href="#kun-huo-du" class="header-anchor"> </a></h2>
+<p>我们通常使用困惑度（perplexity）来评价语言模型的好坏。<strong>困惑度是对交叉熵损失函数做指数运算后得到的值</strong>。特别地，</p>
+<ul>
+<li>最佳情况下，模型总是把标签类别的概率预测为1，此时困惑度为1；</li>
+<li>最坏情况下，模型总是把标签类别的概率预测为0，此时困惑度为正无穷；</li>
+<li>基线情况下，模型总是预测所有类别的概率都相同，此时困惑度为类别个数。</li>
+</ul>
+<p>显然，<strong>任何一个有效模型的困惑度必须小于类别个数</strong>。在本例中，困惑度必须小于词典大小<code>vocab_size</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_and_predict_rnn</span>(<span class="params">rnn, get_params, init_rnn_state, num_hiddens,</span></span></span><br><span class="line"><span class="function"><span class="params">                          vocab_size, ctx, corpus_indices, idx_to_char,</span></span></span><br><span class="line"><span class="function"><span class="params">                          char_to_idx, is_random_iter, num_epochs, </span></span></span><br><span class="line"><span class="function"><span class="params">                          num_steps, lr, clipping_theta, batch_size, </span></span></span><br><span class="line"><span class="function"><span class="params">                          pred_period, pred_len, prefixes</span>):</span></span><br><span class="line">    <span class="keyword">if</span> is_random_iter:</span><br><span class="line">      	<span class="comment">#随机采样</span></span><br><span class="line">        data_iter_fn = d2l.data_iter_random</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      	<span class="comment">#相邻采样</span></span><br><span class="line">        data_iter_fn = d2l.data_iter_consecutive</span><br><span class="line">    params = get_params()</span><br><span class="line">    loss = gloss.SoftmaxCrossEntropyLoss()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> is_random_iter:  <span class="comment"># 如使用相邻采样，在epoch开始时初始化隐藏状态</span></span><br><span class="line">            state = init_rnn_state(batch_size, num_hiddens, ctx)</span><br><span class="line">        l_sum, n, start = <span class="number">0.0</span>, <span class="number">0</span>, time.time()</span><br><span class="line">        data_iter = data_iter_fn(corpus_indices, batch_size, num_steps, ctx)</span><br><span class="line">        <span class="keyword">for</span> X, Y <span class="keyword">in</span> data_iter:</span><br><span class="line">            <span class="keyword">if</span> is_random_iter:  <span class="comment"># 如使用随机采样，在每个小批量更新前初始化隐藏状态</span></span><br><span class="line">                state = init_rnn_state(batch_size, num_hiddens, ctx)</span><br><span class="line">            <span class="keyword">else</span>:  <span class="comment"># 否则需要使用detach函数从计算图分离隐藏状态</span></span><br><span class="line">                <span class="keyword">for</span> s <span class="keyword">in</span> state:</span><br><span class="line">                    s.detach()</span><br><span class="line">            <span class="keyword">with</span> autograd.record():</span><br><span class="line">                inputs = to_onehot(X, vocab_size)</span><br><span class="line">                <span class="comment"># outputs有num_steps个形状为(batch_size, vocab_size)的矩阵</span></span><br><span class="line">                (outputs, state) = rnn(inputs, state, params)</span><br><span class="line">                <span class="comment"># 拼接之后形状为(num_steps * batch_size, vocab_size)</span></span><br><span class="line">                outputs = nd.concat(*outputs, dim=<span class="number">0</span>)</span><br><span class="line">                <span class="comment"># Y的形状是(batch_size, num_steps)，转置后再变成长度为</span></span><br><span class="line">                <span class="comment"># batch * num_steps 的向量，这样跟输出的行一一对应</span></span><br><span class="line">                y = Y.T.reshape((-<span class="number">1</span>,))</span><br><span class="line">                <span class="comment"># 使用交叉熵损失计算平均分类误差</span></span><br><span class="line">                l = loss(outputs, y).mean()</span><br><span class="line">            l.backward()</span><br><span class="line">            grad_clipping(params, clipping_theta, ctx)  <span class="comment"># 裁剪梯度</span></span><br><span class="line">            d2l.sgd(params, lr, <span class="number">1</span>)  <span class="comment"># 因为误差已经取过均值，梯度不用再做平均</span></span><br><span class="line">            l_sum += l.asscalar() * y.size</span><br><span class="line">            n += y.size</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (epoch + <span class="number">1</span>) % pred_period == <span class="number">0</span>:</span><br><span class="line">            <span class="comment">#计算困惑度perplexity</span></span><br><span class="line">            print(<span class="string">&#x27;epoch %d, perplexity %f, time %.2f sec&#x27;</span> % (</span><br><span class="line">                epoch + <span class="number">1</span>, math.exp(l_sum / n), time.time() - start))</span><br><span class="line">            <span class="keyword">for</span> prefix <span class="keyword">in</span> prefixes:</span><br><span class="line">                print(<span class="string">&#x27; -&#x27;</span>, predict_rnn(prefix, pred_len, rnn, params, </span><br><span class="line">                                        init_rnn_state, num_hiddens,</span><br><span class="line">                                        vocab_size, ctx, idx_to_char, </span><br><span class="line">                                        char_to_idx))</span><br><span class="line">                </span><br><span class="line"><span class="comment">#采用随机采样训练模型并创作歌词</span></span><br><span class="line">train_and_predict_rnn(rnn, get_params, init_rnn_state, num_hiddens, </span><br><span class="line">                      vocab_size, ctx, corpus_indices, idx_to_char, </span><br><span class="line">                      char_to_idx, <span class="literal">True</span>, num_epochs, num_steps, lr,</span><br><span class="line">                      clipping_theta, batch_size, pred_period, </span><br><span class="line">                      pred_len, prefixes)</span><br><span class="line"></span><br><span class="line">epoch <span class="number">50</span>, perplexity <span class="number">68.386932</span>, time <span class="number">0.90</span> sec</span><br><span class="line"> - 分开 我不要再 你使的让我疯狂的可爱女人 坏坏的让我疯狂的可爱女人 坏坏的让我疯狂的可爱女人 坏坏的让我</span><br><span class="line"> - 不分开 我不要再 你使的让我疯狂的可爱女人 坏坏的让我疯狂的可爱女人 坏坏的让我疯狂的可爱女人 坏坏的让我</span><br><span class="line">epoch <span class="number">100</span>, perplexity <span class="number">9.560738</span>, time <span class="number">1.20</span> sec</span><br><span class="line"> - 分开 一颗两双截 谁有它怕 温小心人的 边 情着我 别过了 快颗两睛我 我有一口 你知我 别地你 三颗四</span><br><span class="line"> - 不分开永 我爱好你 你小我 别怪我 三子我有说头开  我的让我疯狂的可爱女人 坏坏的让我疯狂的可爱女人 坏</span><br><span class="line">epoch <span class="number">150</span>, perplexity <span class="number">2.757908</span>, time <span class="number">0.90</span> sec</span><br><span class="line"> - 分开 一只两双截棍 哼哼哈兮  谁说都有难符了一切会 宁在的只女在出暴力平 你板上的字迹依然清晰风  我</span><br><span class="line"> - 不分开吗 我想你爸 你打我妈 这样透义不屈 又哼哈兮 是谁在练切棍 哼哼哈兮 快使用双截棍 哼哼哈兮 如果</span><br><span class="line">epoch <span class="number">200</span>, perplexity <span class="number">1.532892</span>, time <span class="number">0.94</span> sec</span><br><span class="line"> - 分开 不想不人 心一放纵 说我不懂  不有用可 却是经在去在 哼知哈兮 是使用双截棍 哼 我用手刀防 让</span><br><span class="line"> - 不分开期 然后将过去 慢慢温习 让我爱上你 那场悲剧 是你完美演出的一场戏 宁愿心碎哭泣 再狠狠忘记 还是</span><br><span class="line">epoch <span class="number">250</span>, perplexity <span class="number">1.289847</span>, time <span class="number">0.92</span> sec</span><br><span class="line"> - 分开 沙亮的在 在人待纵 疗伤止梦 象再不同 你一放空 不敢不容 没一场痛 不敢去碰 没有梦 痛一句珍重</span><br><span class="line"> - 不分开吗 我叫你爸 你打我妈 这样对吗干嘛这样 何必让酒牵鼻子走 瞎 说是了木丛步的誓 手地安会满刻出土发</span><br></pre></td></tr></table></figure>
+<h1><span id="jian-ji-shi-xian">简洁实现</span><a href="#jian-ji-shi-xian" class="header-anchor"> </a></h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> autograd, gluon, init, nd</span><br><span class="line"><span class="keyword">from</span> mxnet.gluon <span class="keyword">import</span> loss <span class="keyword">as</span> gloss, nn, rnn</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">(corpus_indices, char_to_idx, idx_to_char,</span><br><span class="line"> vocab_size) = d2l.load_data_jay_lyrics()</span><br><span class="line">num_hiddens = <span class="number">256</span></span><br><span class="line">rnn_layer = rnn.RNN(num_hiddens)</span><br><span class="line">rnn_layer.initialize()</span><br><span class="line">batch_size = <span class="number">2</span></span><br><span class="line"><span class="comment">#调用rnn_layer的成员函数begin_state来返回初始化的隐藏状态列表。</span></span><br><span class="line"><span class="comment">#它有一个形状为(隐藏层个数, 批量大小, 隐藏单元个数)的元素。</span></span><br><span class="line">state = rnn_layer.begin_state(batch_size=batch_size)</span><br><span class="line"><span class="comment"># state[0].shape (1, 2, 256)</span></span><br></pre></td></tr></table></figure>
+<p><code>rnn_layer</code>的输入形状为<strong>(时间步数, 批量大小, 输入个数)</strong>。其中输入个数即one-hot向量长度（词典大小）。此外，<code>rnn_layer</code>作为Gluon的<code>rnn.RNN</code>实例，<strong>在前向计算后会分别返回输出和隐藏状态，其中输出指的是隐藏层在各个时间步上计算并输出的隐藏状态，它们通常作为后续输出层的输入</strong>。需要强调的是，该“输出”本身并不涉及输出层计算，形状为(时间步数, 批量大小, 隐藏单元个数)。而<code>rnn.RNN</code>实例在前向计算返回的隐藏状态指的是隐藏层在最后时间步的可用于初始化下一时间步的隐藏状态：当隐藏层有多层时，每一层的隐藏状态都会记录在该变量中；对于像长短期记忆这样的循环神经网络，该变量还会包含其他信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">num_steps = <span class="number">35</span></span><br><span class="line">X = nd.random.uniform(shape=(num_steps, batch_size, vocab_size))</span><br><span class="line">Y, state_new = rnn_layer(X, state)</span><br><span class="line">Y.shape, <span class="built_in">len</span>(state_new), state_new[<span class="number">0</span>].shape</span><br><span class="line"></span><br><span class="line">((<span class="number">35</span>, <span class="number">2</span>, <span class="number">256</span>), <span class="number">1</span>, (<span class="number">1</span>, <span class="number">2</span>, <span class="number">256</span>))</span><br></pre></td></tr></table></figure>
+<p>接下来我们继承<code>Block</code>类来定义一个完整的循环神经网络。它首先将输入数据使用one-hot向量表示后输入到<code>rnn_layer</code>中，然后使用全连接输出层得到输出。输出个数等于词典大小<code>vocab_size</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RNNModel</span>(<span class="params">nn.Block</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, rnn_layer, vocab_size, **kwargs</span>):</span></span><br><span class="line">        <span class="built_in">super</span>(RNNModel, self).__init__(**kwargs)</span><br><span class="line">        self.rnn = rnn_layer</span><br><span class="line">        self.vocab_size = vocab_size</span><br><span class="line">        self.dense = nn.Dense(vocab_size)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, inputs, state</span>):</span></span><br><span class="line">        <span class="comment"># 将输入转置成(num_steps, batch_size)后获取one-hot向量表示</span></span><br><span class="line">        X = nd.one_hot(inputs.T, self.vocab_size)</span><br><span class="line">        Y, state = self.rnn(X, state)</span><br><span class="line">        <span class="comment"># 全连接层会首先将Y的形状变成(num_steps * batch_size, num_hiddens)，它的输出</span></span><br><span class="line">        <span class="comment"># 形状为(num_steps * batch_size, vocab_size)</span></span><br><span class="line">        output = self.dense(Y.reshape((-<span class="number">1</span>, Y.shape[-<span class="number">1</span>])))</span><br><span class="line">        <span class="keyword">return</span> output, state</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">begin_state</span>(<span class="params">self, *args, **kwargs</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.rnn.begin_state(*args, **kwargs)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict_rnn_gluon</span>(<span class="params">prefix, num_chars, model, vocab_size, </span></span></span><br><span class="line"><span class="function"><span class="params">                      ctx, idx_to_char, char_to_idx</span>):</span></span><br><span class="line">    <span class="comment"># 使用model的成员函数来初始化隐藏状态</span></span><br><span class="line">    state = model.begin_state(batch_size=<span class="number">1</span>, ctx=ctx)</span><br><span class="line">    output = [char_to_idx[prefix[<span class="number">0</span>]]]</span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">range</span>(num_chars + <span class="built_in">len</span>(prefix) - <span class="number">1</span>):</span><br><span class="line">        X = nd.array([output[-<span class="number">1</span>]], ctx=ctx).reshape((<span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        (Y, state) = model(X, state)  <span class="comment"># 前向计算不需要传入模型参数</span></span><br><span class="line">        <span class="keyword">if</span> t &lt; <span class="built_in">len</span>(prefix) - <span class="number">1</span>:</span><br><span class="line">            output.append(char_to_idx[prefix[t + <span class="number">1</span>]])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            output.append(<span class="built_in">int</span>(Y.argmax(axis=<span class="number">1</span>).asscalar()))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join([idx_to_char[i] <span class="keyword">for</span> i <span class="keyword">in</span> output])</span><br><span class="line">  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_and_predict_rnn_gluon</span>(<span class="params">model, num_hiddens, vocab_size, ctx,</span></span></span><br><span class="line"><span class="function"><span class="params">                                corpus_indices, idx_to_char, char_to_idx,</span></span></span><br><span class="line"><span class="function"><span class="params">                                num_epochs, num_steps, lr, clipping_theta,</span></span></span><br><span class="line"><span class="function"><span class="params">                                batch_size, pred_period, pred_len, </span></span></span><br><span class="line"><span class="function"><span class="params">                                prefixes</span>):</span></span><br><span class="line">    loss = gloss.SoftmaxCrossEntropyLoss()</span><br><span class="line">    model.initialize(ctx=ctx, force_reinit=<span class="literal">True</span>, init=init.Normal(<span class="number">0.01</span>))</span><br><span class="line">    trainer = gluon.Trainer(model.collect_params(), <span class="string">&#x27;sgd&#x27;</span>,</span><br><span class="line">                            &#123;<span class="string">&#x27;learning_rate&#x27;</span>: lr, <span class="string">&#x27;momentum&#x27;</span>: <span class="number">0</span>, <span class="string">&#x27;wd&#x27;</span>: <span class="number">0</span>&#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">        l_sum, n, start = <span class="number">0.0</span>, <span class="number">0</span>, time.time()</span><br><span class="line">        data_iter = d2l.data_iter_consecutive(</span><br><span class="line">            corpus_indices, batch_size, num_steps, ctx)</span><br><span class="line">        state = model.begin_state(batch_size=batch_size, ctx=ctx)</span><br><span class="line">        <span class="keyword">for</span> X, Y <span class="keyword">in</span> data_iter:</span><br><span class="line">            <span class="keyword">for</span> s <span class="keyword">in</span> state:</span><br><span class="line">                s.detach()</span><br><span class="line">            <span class="keyword">with</span> autograd.record():</span><br><span class="line">                (output, state) = model(X, state)</span><br><span class="line">                y = Y.T.reshape((-<span class="number">1</span>,))</span><br><span class="line">                l = loss(output, y).mean()</span><br><span class="line">            l.backward()</span><br><span class="line">            <span class="comment"># 梯度裁剪</span></span><br><span class="line">            params = [p.data() <span class="keyword">for</span> p <span class="keyword">in</span> model.collect_params().values()]</span><br><span class="line">            d2l.grad_clipping(params, clipping_theta, ctx)</span><br><span class="line">            trainer.step(<span class="number">1</span>)  <span class="comment"># 因为已经误差取过均值，梯度不用再做平均</span></span><br><span class="line">            l_sum += l.asscalar() * y.size</span><br><span class="line">            n += y.size</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (epoch + <span class="number">1</span>) % pred_period == <span class="number">0</span>:</span><br><span class="line">            print(<span class="string">&#x27;epoch %d, perplexity %f, time %.2f sec&#x27;</span> % (</span><br><span class="line">                epoch + <span class="number">1</span>, math.exp(l_sum / n), time.time() - start))</span><br><span class="line">            <span class="keyword">for</span> prefix <span class="keyword">in</span> prefixes:</span><br><span class="line">                print(<span class="string">&#x27; -&#x27;</span>, predict_rnn_gluon(</span><br><span class="line">                    prefix, pred_len, model, vocab_size, ctx, </span><br><span class="line">                  idx_to_char, char_to_idx))</span><br><span class="line">                </span><br><span class="line">num_epochs, batch_size, lr, clipping_theta = <span class="number">250</span>, <span class="number">32</span>, <span class="number">1e2</span>, <span class="number">1e-2</span></span><br><span class="line">pred_period, pred_len, prefixes = <span class="number">50</span>, <span class="number">50</span>, [<span class="string">&#x27;分开&#x27;</span>, <span class="string">&#x27;不分开&#x27;</span>]</span><br><span class="line">train_and_predict_rnn_gluon(model, num_hiddens, vocab_size, ctx, </span><br><span class="line">                            corpus_indices, idx_to_char, </span><br><span class="line">                            char_to_idx,num_epochs, num_steps, </span><br><span class="line">                            lr, clipping_theta, batch_size, </span><br><span class="line">                            pred_period, pred_len, prefixes)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">epoch <span class="number">50</span>, perplexity <span class="number">79.334967</span>, time <span class="number">0.04</span> sec</span><br><span class="line"> - 分开 我想能这爱 我不能再想 我不能再想 我不能再想 我不能再想 我不能再想 我不能再想 我不能再想 我</span><br><span class="line"> - 不分开 我想你这爱 我不能我想 我不能你想 我不能再想 我不能再想 我不能再想 我不能再想 我不能再想 我</span><br><span class="line">epoch <span class="number">100</span>, perplexity <span class="number">13.665787</span>, time <span class="number">0.04</span> sec</span><br><span class="line"> - 分开你的手篇美公主卷风我的那画面知难过 就在星人一棍 我怀带起主每我妈攻 难道你手不会痛么难个人我的泪望</span><br><span class="line"> - 不分开 就是星人一点 我每带起主每我妈妈 难道你的太快就像龙不风我的那画面知的可爱女人 坏坏的让我疯狂的可</span><br><span class="line">epoch <span class="number">150</span>, perplexity <span class="number">4.181531</span>, time <span class="number">0.04</span> sec</span><br><span class="line"> - 分开 我来想能宣布 不你依对不起我进妈 我的伤口被你拆封 誓言太 一步两颗三颗四颗 连成线背著背默默许下</span><br><span class="line"> - 不分开 娘子的手猫的模瓣 古著葛没担忧软单的姑窗 铺阳榉木去在见驳的砖娘 铺著榉木去在见驳的砖娘 铺著榉木</span><br><span class="line">epoch <span class="number">200</span>, perplexity <span class="number">2.327051</span>, time <span class="number">0.04</span> sec</span><br><span class="line"> - 分开 我来无这为布 对你依依不舍 连隔壁邻居都猜到我 在有翅 失沉时睛  如悔的假蜜 让欢在失潮的模样 </span><br><span class="line"> - 不分开 就是兵我环绕大自 我想再这样牵着愿 思念像底格里斯都难的漫延 当古文明只剩垂不朽的诗篇 我给你的爱</span><br><span class="line">epoch <span class="number">250</span>, perplexity <span class="number">1.857790</span>, time <span class="number">0.04</span> sec</span><br><span class="line"> - 分开 我有就这白照片开 思是你笑格里斯河般的一延 当古文明只剩下甜解的语言 传说就成了永垂不朽的诗篇 我</span><br><span class="line"> - 不分开 就是我不多太多 但那个人 再来一碗热粥 配上几斤的牛肉 我说店小二 三两银够不够 景色入秋 漫天黄</span><br></pre></td></tr></table></figure>
+<h1><span id="xiao-jie">小结</span><a href="#xiao-jie" class="header-anchor"> </a></h1>
+<ul>
+<li>语言模型是自然语言处理的重要技术。</li>
+<li><span class="math inline">\(N\)</span>元语法是基于<span class="math inline">\(n-1\)</span>阶马尔可夫链的概率语言模型，其中<span class="math inline">\(n\)</span>权衡了计算复杂度和模型准确性。</li>
+<li>使用循环计算的网络即循环神经网络。</li>
+<li>循环神经网络的隐藏状态可以捕捉截至当前时间步的序列的历史信息。</li>
+<li>循环神经网络模型参数的数量不随时间步的增加而增长。</li>
+<li>可以基于字符级循环神经网络来创建语言模型。</li>
+<li>时序数据采样方式包括随机采样和相邻采样。使用这两种方式的循环神经网络训练在实现上略有不同。</li>
+<li>可以用基于字符级循环神经网络的语言模型来生成文本序列，例如创作歌词。</li>
+<li>当训练循环神经网络时，为了应对梯度爆炸，可以裁剪梯度。</li>
+<li>困惑度是对交叉熵损失函数做指数运算后得到的值。</li>
+<li>Gluon的<code>rnn.RNN</code>实例在前向计算后会分别返回输出和隐藏状态。该前向计算并不涉及输出层计算。</li>
+</ul>
+
+
+
+<!-- Comments -->
+<div>
+    
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+</div>
+
+
+
+    
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+          }
+        });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+            tex2jax: {
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+          });
+      </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+              var all = MathJax.Hub.getAllJax(), i;
+              for(i=0; i < all.length; i += 1) {
+                  all[i].SourceElement().parentNode.className += ' has-jax';
+              }
+          });
+      </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+<footer id="footer">
+    <div class="inner">
+        <section>
+            <h2>About</h2>
+            <div>
+                This blog is used to save the things that I have learnt from Machine Learning and Deep Learning.
+            </div>
+        </section>
+        <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+                
+                
+                
+                
+                
+                    <li><a href="https://github.com/yeliyang/" class="icon style2 fa-github" target="_blank" ><span class="label">GitHub</span></a></li>
+                
+                
+                
+                
+                
+                    <li><a href="\#" class="icon style2 fa-envelope-o" target="_blank" ><span class="label">Email</span></a></li>
+                
+                
+                    <li><a href="\#" class="icon style2 fa-rss" target="_blank" ><span class="label">RSS</span></a></li>
+                
+            </ul>
+        </section>
+        <ul class="copyright">
+            <li>&copy; Untitled. All rights reserved</li>
+            <li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+            <li>Hexo: <a href="http://www.codeblocq.com/" target="_blank">Jonathan Klughertz</a></li>
+        </ul>
+    </div>
+</footer>
+    </div>
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- skel -->
+
+<script src="/js/skel.min.js"></script>
+
+
+<!-- Custom Code -->
+
+<script src="/js/util.js"></script>
+
+
+<!--[if lte IE 8]>
+
+<script src="/js/ie/respond.min.js"></script>
+
+<![endif]-->
+
+<!-- Custom Code -->
+
+<script src="/js/main.js"></script>
+
+
+<!-- Gallery -->
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'liyang';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>
