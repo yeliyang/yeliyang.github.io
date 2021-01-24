@@ -12,13 +12,15 @@
     
         <meta name="description" content="引言
 基础知识
+数学形式
+训练方法
 
 
 
 
 
-引言 
-相较于协同过滤模型仅利用用户与物品的相互行为信息进行推荐，逻辑回归模型能够综合利用用户、物品、上下文等多种不同的特征，生成较为“全面”的推荐结果。逻辑回归的另一种表现形式“感知机”作为神经网络中最基础的单一神经元，是深度学习的基础性结构。因此，能够进行特征融合的逻辑">
+
+引言 相较于协同过滤模型仅利用用户与物品的相互行为信息进行推荐，逻辑回归模型能够综合利用用户、物品、上下文等多种不同的特征，生成较为“全面”的推荐结果。逻辑回归的另一种表现形式“感知机”作为神经网络中最基础的单一神经元，是深度学习的基础性结构。因此，能">
     
 
     <!--Author-->
@@ -132,13 +134,13 @@
         
             <span class="post-count">
            字数:
-            <a href="">336字 |</a>  
+            <a href="">969字 |</a>  
             </span>
         
         
             <span class="post-count">
            阅读时间:
-            <a href="">1min |</a>  
+            <a href="">3min |</a>  
             </span>
         
 	<span class="post-count">发布于:2021-01-20</span>
@@ -162,28 +164,52 @@
 
 
 <!-- Content -->
-<div class="tocStart">
+<div class="toc">
 
-</div>
 <!-- toc -->
 <ul>
 <li><a href="#yin-yan">引言</a></li>
-<li><a href="#ji-chu-zhi-shi">基础知识</a></li>
+<li><a href="#ji-chu-zhi-shi">基础知识</a><ul>
+<li><a href="#shu-xue-xing-shi">数学形式</a></li>
+<li><a href="#xun-lian-fang-fa">训练方法</a></li>
+</ul>
+</li>
 </ul>
 <!-- tocstop -->
-<div class="tocEnd">
-
 </div>
-<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1>
-<p>相较于协同过滤模型仅利用用户与物品的相互行为信息进行推荐，逻辑回归模型能够综合利用用户、物品、上下文等多种不同的特征，生成较为“全面”的推荐结果。逻辑回归的另一种表现形式“感知机”作为神经网络中最基础的单一神经元，是深度学习的基础性结构。因此，能够进行特征融合的逻辑回归模型成为了协同过滤的推荐模型发展的另一个主要方向。</p>
-<h1><span id="ji-chu-zhi-shi">基础知识</span><a href="#ji-chu-zhi-shi" class="header-anchor"> </a></h1>
-<p>相比<code>协同过滤</code>和<code>矩阵分解</code>利用用户和物品的“相似度”进行推荐，逻辑回归则将推荐问题转换成了分类问题，通过预测正样本的概率对物品进行排序。这里的正样本表示为用户点击了某件商品，也可以是观看了某个视频，一个用户产生的“正反馈”行为。因此逻辑回归将推荐问题转换成了<strong>点击率（Click Through Rate, CTR）预估问题</strong>。</p>
+
+<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1><p>相较于协同过滤模型仅利用用户与物品的相互行为信息进行推荐，逻辑回归模型能够综合利用用户、物品、上下文等多种不同的特征，生成较为“全面”的推荐结果。逻辑回归的另一种表现形式“感知机”作为神经网络中最基础的单一神经元，是深度学习的基础性结构。因此，能够进行特征融合的逻辑回归模型成为了协同过滤的推荐模型发展的另一个主要方向。</p>
+<h1><span id="ji-chu-zhi-shi">基础知识</span><a href="#ji-chu-zhi-shi" class="header-anchor"> </a></h1><p>相比<code>协同过滤</code>和<code>矩阵分解</code>利用用户和物品的“相似度”进行推荐，逻辑回归则将推荐问题转换成了分类问题，通过预测正样本的概率对物品进行排序。这里的正样本表示为用户点击了某件商品，也可以是观看了某个视频，一个用户产生的“正反馈”行为。因此逻辑回归将推荐问题转换成了<strong>点击率（Click Through Rate, CTR）预估问题</strong>。</p>
 <p>基于逻辑回归的推荐过程：</p>
-<ol type="1">
+<ol>
 <li>将用户特征，如年龄、性别、物品属性、物品描述、当前时间、当前地点等转换成数值型特征向量。</li>
-<li></li>
+<li>确认逻辑回归模型的优化目标（以优化点击率为例），利用已有样本数据对逻辑回归模型进行训练，确定逻辑回归模型内部参数。</li>
+<li>在模型服务阶段，将特征向量输入逻辑回归模型，得到用户点击物品的概率</li>
+<li>利用点击概率对所有物品进行排序，得到推荐列表。</li>
 </ol>
-<p><a href="/2021/01/15/mlp-scratch/#sigmoid-han-shu">"sigmoid"</a></p>
+<p>基于逻辑回归的推荐过程的重点在于，利用样本的特征向量进行模型训练和在线推断。</p>
+<h2><span id="shu-xue-xing-shi">数学形式</span><a href="#shu-xue-xing-shi" class="header-anchor"> </a></h2><p>逻辑回归模型的推断过程如下：</p>
+<ol>
+<li>将特征向量$x=(x_1,x_2,…,x_n)^T$作为模型的输入。</li>
+<li>通过对各特征赋予相应的权重$(w<em>1,w_2,…,w</em>{n+1})$，来表示各特征的重要性差异，将各特征进行加权求和，得到$x^Tw$。</li>
+<li>将$x^Tw$输入<a href="/2021/01/15/mlp-scratch/#sigmoid-han-shu">“sigmoid”</a>函数，使之映射到0-1的区间，得到最终的点击率。</li>
+</ol>
+<p>数学表达式：</p>
+<script type="math/tex; mode=display">
+f(x)=\frac{1}{1+e^{w\cdot x+b}}</script><p>对于标准的逻辑回归模型来说，要确定的参数就是特征向量相应的权重向量$w$，下面介绍训练方法。</p>
+<h2><span id="xun-lian-fang-fa">训练方法</span><a href="#xun-lian-fang-fa" class="header-anchor"> </a></h2><p>常用的方法有：梯度下降法、牛顿法、拟牛顿法等，其中梯度下降法应用最广泛。</p>
+<p>使用梯度下降法求解逻辑回归模型的第一步是确定目标函数。</p>
+<p>逻辑回归的数学形式：</p>
+<script type="math/tex; mode=display">
+P(y|x;w) = (f_w(x))^y(1-f_w(x))^{1-y}</script><p>由极大似然估计的原理可以写出逻辑回归的目标函数：</p>
+<script type="math/tex; mode=display">
+L(w) = \prod^m_{i=1}P(y|x;w)</script><p>由于目标函数连乘的形式不便于求导，故在两侧取$\log$，并乘以系数$-(1/m)$，将求最大值转换成求极小值的问题，最终的目标函数形式：</p>
+<script type="math/tex; mode=display">
+J(w)=-\frac{1}{m}l(w)=-\frac{1}{m}\log L(w)=-\frac{1}{m}(\sum^m_{i=1}(y^i\log f_w(x^i)+(1-y^i)\log(1-f_w(x^i))))</script><p>在得到逻辑回归的目标函数后，需对每个参数求偏导，得到梯度方向，对$J(w)$中的参数$w_j$求偏导的结果：</p>
+<script type="math/tex; mode=display">
+\frac{\mathrm{d}}{\mathrm{d}w_j}J(w)=\frac{1}{m}\sum^m_{i=1}(f_w(x^i)-y^i)x^i_j</script><p>得到梯度后，可得到模型参数的更新公式:</p>
+<script type="math/tex; mode=display">
+w_j\leftarrow w_j - \gamma \frac{1}{m}\sum^m_{i=1}(f_w(x^i)-y^i)x^i_j</script><p>至此完成了逻辑回归模型的更新推导。其方法与<a href="/2021/01/19/mf/#">“矩阵分解(MF)”</a></p>
 
 
 

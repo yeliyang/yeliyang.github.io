@@ -12,22 +12,20 @@
     
         <meta name="description" content="引言
 基础知识
-
 求解过程
-
 奇异值分解
 梯度下降分解
 
+
 消除用户和物品打分的偏差
+
 
 小结
 
 
 
 
-
-引言 
-针对经典的协同过滤算法的头部效应较明显、泛化能力较弱的问题，矩阵分解算法被提出。矩阵算法在协同过滤的基础上加入了隐向量的概念，加强了模型处理稀疏矩阵的能力，针对性的解决了协同过滤存在的主要问">
+引言 针对经典的协同过滤算法的头部效应较明显、泛化能力较弱的问题，矩阵分解算法被提出。矩阵算法在协同过滤的基础上加入了隐向量的概念，加强了模型处理稀疏矩阵的能力，针对性的解决了协同过滤存在的主要问题。">
     
 
     <!--Author-->
@@ -171,87 +169,84 @@
 
 
 <!-- Content -->
-<div class="tocStart">
+<div class="toc">
 
-</div>
 <!-- toc -->
 <ul>
 <li><a href="#yin-yan">引言</a></li>
-<li><a href="#ji-chu-zhi-shi">基础知识</a>
-<ul>
-<li><a href="#qiu-jie-guo-cheng">求解过程</a>
-<ul>
+<li><a href="#ji-chu-zhi-shi">基础知识</a><ul>
+<li><a href="#qiu-jie-guo-cheng">求解过程</a><ul>
 <li><a href="#qi-yi-zhi-fen-jie">奇异值分解</a></li>
 <li><a href="#ti-du-xia-jiang-fen-jie">梯度下降分解</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#xiao-chu-yong-hu-he-wu-pin-da-fen-de-pian-chai">消除用户和物品打分的偏差</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#xiao-jie">小结</a></li>
 </ul>
 <!-- tocstop -->
-<div class="tocEnd">
-
 </div>
-<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1>
-<p>针对经典的协同过滤算法的头部效应较明显、泛化能力较弱的问题，矩阵分解算法被提出。矩阵算法在协同过滤的基础上加入了隐向量的概念，加强了模型处理稀疏矩阵的能力，针对性的解决了协同过滤存在的主要问题。</p>
-<h1><span id="ji-chu-zhi-shi">基础知识</span><a href="#ji-chu-zhi-shi" class="header-anchor"> </a></h1>
-<p>矩阵分解算法期望为每一个用户和物品生成一个隐变量，将用户和物品定位到隐向量的表示空间上，这样用户和物品可以在同一个二维空间中，只要给用户<strong>推荐距离相近</strong>的物品。在<code>矩阵分解</code>的算法框架下，用户和物品的<strong>隐向量是通过分解协同过滤生成的共现矩阵</strong>得到的。</p>
-<p><img src="/images/mf/mf_logic.jpg"></p>
-<p>矩阵分解算法将<span class="math inline">\(m \times n\)</span>维的共现矩阵<span class="math inline">\(R\)</span>分解为<span class="math inline">\(m \times k\)</span>维的用户矩阵<span class="math inline">\(U\)</span>和<span class="math inline">\(k \times n\)</span>维的物品矩阵<span class="math inline">\(V\)</span>相乘的形式。其中<span class="math inline">\(m\)</span>是用户数量，<span class="math inline">\(n\)</span>是物品数量，<span class="math inline">\(k\)</span>是隐向量的维度。<strong><span class="math inline">\(k\)</span>的大小决定了隐向量表达能力的强弱</strong>。</p>
-<p>基于用户矩阵<span class="math inline">\(U\)</span>和物品矩阵<span class="math inline">\(V\)</span>，用户<span class="math inline">\(u\)</span>对物品<span class="math inline">\(i\)</span>的预估评分： <span class="math display">\[
-\hat{r}_{ui}=q_i^Tp_u
-\]</span> 其中<span class="math inline">\(p_u\)</span>是用户<span class="math inline">\(u\)</span>在用户矩阵<span class="math inline">\(U\)</span>中的对应行向量，<span class="math inline">\(q_i\)</span>是物品<span class="math inline">\(i\)</span>在物品矩阵<span class="math inline">\(V\)</span>中的对应列向量。</p>
-<h2><span id="qiu-jie-guo-cheng">求解过程</span><a href="#qiu-jie-guo-cheng" class="header-anchor"> </a></h2>
-<p>对矩阵进行矩阵分解的主要方法有三种：<strong>特征值分解</strong>（Eigen Decomposition）、<strong>奇异值分解</strong>（Singular Value Decomposition，<strong>SVD</strong>）和<strong>梯度下降</strong>（Gradient Descent）。其中，<strong>特征值分解只能用于方阵</strong>，不适用于分解用户-物品矩阵。</p>
-<h3><span id="qi-yi-zhi-fen-jie">奇异值分解</span><a href="#qi-yi-zhi-fen-jie" class="header-anchor"> </a></h3>
-<p>假设矩阵<span class="math inline">\(M\)</span>是一个<span class="math inline">\(m \times n\)</span>的矩阵，则一定存在一个分解<span class="math inline">\(M=U \sum{V^t}\)</span>，其中<span class="math inline">\(U\)</span>是<span class="math inline">\(m \times m\)</span>的正交矩阵，<span class="math inline">\(V\)</span>是<span class="math inline">\(n \times n\)</span>的正交矩阵, <span class="math inline">\(\sum\)</span>是<span class="math inline">\(m \times n\)</span>的对角阵。</p>
-<p>取对角阵<span class="math inline">\(\sum\)</span>中较大的<span class="math inline">\(k\)</span>个元素作为隐含特征，删除<span class="math inline">\(/sum\)</span>的其他维度及<span class="math inline">\(U\)</span>和<span class="math inline">\(V\)</span>中对应的维度，矩阵<span class="math inline">\(M\)</span>被分解为<span class="math inline">\(M \approx {U_{m \times k}\sum_{k \times k}V_{k \times n}}^T\)</span>，至此完成了隐向量维度为<span class="math inline">\(k\)</span>的矩阵分解。</p>
+
+<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1><p>针对经典的协同过滤算法的头部效应较明显、泛化能力较弱的问题，矩阵分解算法被提出。矩阵算法在协同过滤的基础上加入了隐向量的概念，加强了模型处理稀疏矩阵的能力，针对性的解决了协同过滤存在的主要问题。</p>
+<h1><span id="ji-chu-zhi-shi">基础知识</span><a href="#ji-chu-zhi-shi" class="header-anchor"> </a></h1><p>矩阵分解算法期望为每一个用户和物品生成一个隐变量，将用户和物品定位到隐向量的表示空间上，这样用户和物品可以在同一个二维空间中，只要给用户<strong>推荐距离相近</strong>的物品。在<code>矩阵分解</code>的算法框架下，用户和物品的<strong>隐向量是通过分解协同过滤生成的共现矩阵</strong>得到的。</p>
+<p><img src="/images/mf/mf_logic.jpg" alt></p>
+<p>矩阵分解算法将$m \times n$维的共现矩阵$R$分解为$m \times k$维的用户矩阵$U$和$k \times n$维的物品矩阵$V$相乘的形式。其中$m$是用户数量，$n$是物品数量，$k$是隐向量的维度。<strong>$k$的大小决定了隐向量表达能力的强弱</strong>。</p>
+<p>基于用户矩阵$U$和物品矩阵$V$，用户$u$对物品$i$的预估评分：</p>
+<script type="math/tex; mode=display">
+\hat{r}_{ui}=q_i^Tp_u</script><p>其中$p_u$是用户$u$在用户矩阵$U$中的对应行向量，$q_i$是物品$i$在物品矩阵$V$中的对应列向量。</p>
+<h2><span id="qiu-jie-guo-cheng">求解过程</span><a href="#qiu-jie-guo-cheng" class="header-anchor"> </a></h2><p>对矩阵进行矩阵分解的主要方法有三种：<strong>特征值分解</strong>（Eigen Decomposition）、<strong>奇异值分解</strong>（Singular Value Decomposition，<strong>SVD</strong>）和<strong>梯度下降</strong>（Gradient Descent）。其中，<strong>特征值分解只能用于方阵</strong>，不适用于分解用户-物品矩阵。</p>
+<h3><span id="qi-yi-zhi-fen-jie">奇异值分解</span><a href="#qi-yi-zhi-fen-jie" class="header-anchor"> </a></h3><p>假设矩阵$M$是一个$m \times n$的矩阵，则一定存在一个分解$M=U  \sum{V^t}$，其中$U$是$m \times m$的正交矩阵，$V$是$n \times n$的正交矩阵, $\sum$是$m \times n$的对角阵。</p>
+<p>取对角阵$\sum$中较大的$k$个元素作为隐含特征，删除$/sum$的其他维度及$U$和$V$中对应的维度，矩阵$M$被分解为$M \approx {U<em>{m \times k}\sum</em>{k \times k}V_{k \times n}}^T$，至此完成了隐向量维度为$k$的矩阵分解。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> linalg <span class="keyword">as</span> la</span><br><span class="line"><span class="comment">#numpy.linalg.svd实现svd分解</span></span><br><span class="line">A=np.random.randint(<span class="number">1</span>,<span class="number">25</span>,[<span class="number">5</span>,<span class="number">5</span>])</span><br><span class="line">u,sigma,vt = la.svd(A)</span><br><span class="line">print(A)</span><br><span class="line"><span class="comment">#验证 A = u·s·vt</span></span><br><span class="line">S = np.zeros([<span class="number">5</span>,<span class="number">5</span>])</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    S[i][i] = sigma[i]</span><br><span class="line">tmp = np.dot(u,S)</span><br><span class="line">print(np.dot(tmp,vt))</span><br><span class="line"></span><br><span class="line">[[ <span class="number">1</span> <span class="number">11</span> <span class="number">13</span>  <span class="number">1</span> <span class="number">16</span>]</span><br><span class="line"> [<span class="number">17</span>  <span class="number">8</span> <span class="number">16</span>  <span class="number">8</span> <span class="number">15</span>]</span><br><span class="line"> [<span class="number">17</span> <span class="number">10</span> <span class="number">22</span> <span class="number">12</span>  <span class="number">1</span>]</span><br><span class="line"> [<span class="number">23</span>  <span class="number">3</span> <span class="number">19</span> <span class="number">24</span> <span class="number">10</span>]</span><br><span class="line"> [ <span class="number">3</span> <span class="number">11</span>  <span class="number">3</span>  <span class="number">7</span>  <span class="number">6</span>]]</span><br><span class="line">[[ <span class="number">1.</span> <span class="number">11.</span> <span class="number">13.</span>  <span class="number">1.</span> <span class="number">16.</span>]</span><br><span class="line"> [<span class="number">17.</span>  <span class="number">8.</span> <span class="number">16.</span>  <span class="number">8.</span> <span class="number">15.</span>]</span><br><span class="line"> [<span class="number">17.</span> <span class="number">10.</span> <span class="number">22.</span> <span class="number">12.</span>  <span class="number">1.</span>]</span><br><span class="line"> [<span class="number">23.</span>  <span class="number">3.</span> <span class="number">19.</span> <span class="number">24.</span> <span class="number">10.</span>]</span><br><span class="line"> [ <span class="number">3.</span> <span class="number">11.</span>  <span class="number">3.</span>  <span class="number">7.</span>  <span class="number">6.</span>]]</span><br></pre></td></tr></table></figure>
-<p>S为对角阵<span class="math inline">\(\sum\)</span>中较大的<span class="math inline">\(k\)</span>个元素作为隐含特征</p>
+<p>S为对角阵$\sum$中较大的$k$个元素作为隐含特征</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> S</span><br><span class="line">  </span><br><span class="line">[[<span class="number">60.10509337</span>  <span class="number">0.</span>          <span class="number">0.</span>          <span class="number">0.</span>          <span class="number">0.</span>        ]</span><br><span class="line"> [ <span class="number">0.</span>         <span class="number">20.54521797</span>  <span class="number">0.</span>          <span class="number">0.</span>          <span class="number">0.</span>        ]</span><br><span class="line"> [ <span class="number">0.</span>          <span class="number">0.</span>         <span class="number">11.21739192</span>  <span class="number">0.</span>          <span class="number">0.</span>        ]</span><br><span class="line"> [ <span class="number">0.</span>          <span class="number">0.</span>          <span class="number">0.</span>          <span class="number">8.87411711</span>  <span class="number">0.</span>        ]</span><br><span class="line"> [ <span class="number">0.</span>          <span class="number">0.</span>          <span class="number">0.</span>          <span class="number">0.</span>          <span class="number">4.86743598</span>]]</span><br></pre></td></tr></table></figure>
 <p>奇异值分解存在两个缺陷：</p>
-<ol type="1">
+<ol>
 <li>奇异值分解要求原始的共现矩阵是稠密的。互联网场景下大部分用户的行为历史非常少，共现矩阵稀疏，如果要用奇异值分解，那么就<strong>需要对缺失元素进行填充</strong>。</li>
-<li><strong>计算复杂度高</strong>，达到了<span class="math inline">\(O(mn^2)\)</span>的级别。</li>
+<li><strong>计算复杂度高</strong>，达到了$O(mn^2)$的级别。</li>
 </ol>
 <p>因此，梯度下降法成为了进行矩阵分解的主要方法。</p>
-<h3><span id="ti-du-xia-jiang-fen-jie">梯度下降分解</span><a href="#ti-du-xia-jiang-fen-jie" class="header-anchor"> </a></h3>
-<p>目标函数： <span class="math display">\[
-\min_{q^*,p^*}\sum_{(u,i) \in K}(r_{ui}-q_i^Tp_u)^2 + \lambda({\left|\left| q_i\right|\right|}^2 + {\left|\left|p_u\right|\right|}^2)
-\]</span> 为了防止过拟合，加入加号后面的正则化项。该目标函数的目的是让原始评分<span class="math inline">\(r_{ui}\)</span>与用户向量和物品向量之积<span class="math inline">\(q_i^Tp_u\)</span>的差尽量小，这样才能<strong>最大限度的保存共现矩阵的原始信息</strong>。</p>
+<h3><span id="ti-du-xia-jiang-fen-jie">梯度下降分解</span><a href="#ti-du-xia-jiang-fen-jie" class="header-anchor"> </a></h3><p>目标函数：</p>
+<script type="math/tex; mode=display">
+\min_{q^*,p^*}\sum_{(u,i) \in K}(r_{ui}-q_i^Tp_u)^2 + \lambda({\left|\left| q_i\right|\right|}^2 + {\left|\left|p_u\right|\right|}^2)</script><p>为了防止过拟合，加入加号后面的正则化项。该目标函数的目的是让原始评分$r_{ui}$与用户向量和物品向量之积$q_i^Tp_u$的差尽量小，这样才能<strong>最大限度的保存共现矩阵的原始信息</strong>。</p>
 <p>梯度下降过程：</p>
-<ol type="1">
-<li><p>确定目标函数</p></li>
+<ol>
+<li><p>确定目标函数</p>
+</li>
 <li><p>对目标函数求偏导，得到梯度下降的方向和幅度。</p>
-<p>根据目标函数，对<span class="math inline">\(q_i\)</span>求偏导，得到： <span class="math display">\[
-2(r_{ui}-q_i^Tp_u)p_u-2\lambda q_i
-\]</span> 对<span class="math inline">\(p_u\)</span>求偏导，得到： <span class="math display">\[
-2(r_{ui}-q_i^Tp_u)q_i-2\lambda p_u
-\]</span></p></li>
-<li><p>利用第二步的求导结果，沿梯度的反方向更新参数： <span class="math display">\[
-q_i\gets q_i-\gamma((r_{ui}-q_i^Tp_u)p_u-\lambda q_i
-\]</span></p>
-<p><span class="math display">\[
-p_u\gets p_u-\gamma((r_{ui}-q_i^Tp_u)q_i-\lambda p_u)
-\]</span></p>
-<p>其中<span class="math inline">\(\gamma\)</span>为学习率。</p></li>
-<li><p>当迭代次数超过上限<span class="math inline">\(n\)</span>或损失低于闸值<span class="math inline">\(\theta\)</span>时，结束训练，否则循环第三步。</p></li>
+<p>根据目标函数，对$q_i$求偏导，得到：</p>
+<script type="math/tex; mode=display">
+2(r_{ui}-q_i^Tp_u)p_u-2\lambda q_i</script><p>对$p_u$求偏导，得到：</p>
+<script type="math/tex; mode=display">
+2(r_{ui}-q_i^Tp_u)q_i-2\lambda p_u</script></li>
+<li><p>利用第二步的求导结果，沿梯度的反方向更新参数：</p>
+<script type="math/tex; mode=display">
+q_i\gets q_i-\gamma((r_{ui}-q_i^Tp_u)p_u-\lambda q_i</script><script type="math/tex; mode=display">
+p_u\gets p_u-\gamma((r_{ui}-q_i^Tp_u)q_i-\lambda p_u)</script><p>其中$\gamma$为学习率。</p>
+</li>
+<li><p>当迭代次数超过上限$n$或损失低于闸值$\theta$时，结束训练，否则循环第三步。</p>
+</li>
 </ol>
-<h2><span id="xiao-chu-yong-hu-he-wu-pin-da-fen-de-pian-chai">消除用户和物品打分的偏差</span><a href="#xiao-chu-yong-hu-he-wu-pin-da-fen-de-pian-chai" class="header-anchor"> </a></h2>
-<p>由于不同用户对打分系统的评估不同，在5分满分的评分里，有的人认为1分是最低的，有的人认为3分就是差评了。为了消除用户和物品打分的偏差（Bias），常用的做法是在矩阵分解时<strong>加入用户和物品的偏差向量</strong>： <span class="math display">\[
-r_{ui} = \mu + b_i + b_u + q_i^Tp_u
-\]</span> 其中<span class="math inline">\(\mu\)</span>是全局偏差常数，<span class="math inline">\(b_i\)</span>时物品偏差系数，可使用物品<span class="math inline">\(i\)</span>收到的所有评分的均值，<span class="math inline">\(b_u\)</span>是用户偏差系数，可使用用户<span class="math inline">\(u\)</span>给出的所有评分的均值。</p>
-<p>目标函数需要修改为： <span class="math display">\[
-\min_{q^*,p^*,b^*}\sum_{(u,i) \in K}(r_{ui}-\mu-b_u-b_i-p_u^Tq_i)^2+\lambda(||p_u||^2+||q_i||^2+b_u^2+b_i^2)
-\]</span> <strong>加入用户和物品的打分偏差项之后，矩阵分解得到的隐向量更能反映不同用户对不同物品的“真实“态度差异，更容易捕捉有价值信息，避免推荐有偏</strong>。</p>
-<h1><span id="xiao-jie">小结</span><a href="#xiao-jie" class="header-anchor"> </a></h1>
-<ul>
-<li><p>由于隐向量的存在，使任意用户和物品之间都可以得到预测分值。</p></li>
-<li><p>隐向量生成过程是对共现矩阵的全局拟合过程，隐向量是利用全局信息生成的，有更强的泛化能力。</p></li>
-<li><p>泛化能力强。</p></li>
-<li><p>空间复杂度低。<span class="math inline">\(O(n+m)·k\)</span></p></li>
-<li><p>更好的扩展性和灵活性。与embedding思想相似，容易与其它特征拼接组合，可以和深度学习无缝结合。</p></li>
-<li><p>矩阵分解不能加入用户、物品和上下文相关特征，推荐结果有局限性。</p></li>
+<h2><span id="xiao-chu-yong-hu-he-wu-pin-da-fen-de-pian-chai">消除用户和物品打分的偏差</span><a href="#xiao-chu-yong-hu-he-wu-pin-da-fen-de-pian-chai" class="header-anchor"> </a></h2><p>由于不同用户对打分系统的评估不同，在5分满分的评分里，有的人认为1分是最低的，有的人认为3分就是差评了。为了消除用户和物品打分的偏差（Bias），常用的做法是在矩阵分解时<strong>加入用户和物品的偏差向量</strong>：</p>
+<script type="math/tex; mode=display">
+r_{ui} = \mu + b_i + b_u + q_i^Tp_u</script><p>其中$\mu$是全局偏差常数，$b_i$时物品偏差系数，可使用物品$i$收到的所有评分的均值，$b_u$是用户偏差系数，可使用用户$u$给出的所有评分的均值。</p>
+<p>目标函数需要修改为：</p>
+<script type="math/tex; mode=display">
+\min_{q^*,p^*,b^*}\sum_{(u,i) \in K}(r_{ui}-\mu-b_u-b_i-p_u^Tq_i)^2+\lambda(||p_u||^2+||q_i||^2+b_u^2+b_i^2)</script><p><strong>加入用户和物品的打分偏差项之后，矩阵分解得到的隐向量更能反映不同用户对不同物品的“真实“态度差异，更容易捕捉有价值信息，避免推荐有偏</strong>。</p>
+<h1><span id="xiao-jie">小结</span><a href="#xiao-jie" class="header-anchor"> </a></h1><ul>
+<li><p>由于隐向量的存在，使任意用户和物品之间都可以得到预测分值。</p>
+</li>
+<li><p>隐向量生成过程是对共现矩阵的全局拟合过程，隐向量是利用全局信息生成的，有更强的泛化能力。</p>
+</li>
+<li><p>泛化能力强。</p>
+</li>
+<li><p>空间复杂度低。$O(n+m)·k$</p>
+</li>
+<li><p>更好的扩展性和灵活性。与embedding思想相似，容易与其它特征拼接组合，可以和深度学习无缝结合。</p>
+</li>
+<li><p>矩阵分解不能加入用户、物品和上下文相关特征，推荐结果有局限性。</p>
+</li>
 </ul>
 
 

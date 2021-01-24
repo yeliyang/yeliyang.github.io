@@ -11,20 +11,19 @@
     <!--Description-->
     
         <meta name="description" content="理论基础
-
 softmax矢量计算
 交叉熵损失函数
 
-代码实践
 
+代码实践
 定义模型
 定义损失函数
 计算分类准确率
 训练模型
 预测
 
-简洁实现
 
+简洁实现
 小结
 
 
@@ -32,8 +31,7 @@ softmax矢量计算
 
 
 
-理论基础 
-softmax函数在深度学习领域应用非常广，不论是卷积神经网络CNN在做图像分类时，还是循环神经网络在自然语言处理方向为文章分类，又或">
+理论基础 softmax函数在深度学习领域应用非常广，不论是卷积神经网络CNN在做图像分类时，还是循环神经网络在自然语言处理方向为文章分类，又或者是">
     
 
     <!--Author-->
@@ -177,63 +175,54 @@ softmax函数在深度学习领域应用非常广，不论是卷积神经网络C
 
 
 <!-- Content -->
-<div class="tocStart">
+<div class="toc">
 
-</div>
 <!-- toc -->
 <ul>
-<li><a href="#li-lun-ji-chu">理论基础</a>
-<ul>
+<li><a href="#li-lun-ji-chu">理论基础</a><ul>
 <li><a href="#softmax-shi-liang-ji-suan">softmax矢量计算</a></li>
 <li><a href="#jiao-cha-shang-sun-shi-han-shu">交叉熵损失函数</a></li>
-</ul></li>
-<li><a href="#dai-ma-shi-jian">代码实践</a>
-<ul>
+</ul>
+</li>
+<li><a href="#dai-ma-shi-jian">代码实践</a><ul>
 <li><a href="#ding-yi-mo-xing">定义模型</a></li>
 <li><a href="#ding-yi-sun-shi-han-shu">定义损失函数</a></li>
 <li><a href="#ji-suan-fen-lei-zhun-que-lu">计算分类准确率</a></li>
 <li><a href="#xun-lian-mo-xing">训练模型</a></li>
 <li><a href="#yu-ce">预测</a></li>
-</ul></li>
-<li><a href="#jian-ji-shi-xian">简洁实现</a>
-<ul>
+</ul>
+</li>
+<li><a href="#jian-ji-shi-xian">简洁实现</a><ul>
 <li><a href="#xiao-jie">小结</a></li>
-</ul></li>
+</ul>
+</li>
 </ul>
 <!-- tocstop -->
-<div class="tocEnd">
-
 </div>
-<h1><span id="li-lun-ji-chu">理论基础</span><a href="#li-lun-ji-chu" class="header-anchor"> </a></h1>
-<p>softmax函数在深度学习领域应用非常广，不论是卷积神经网络CNN在做图像分类时，还是循环神经网络在自然语言处理方向为文章分类，又或者是在推荐系统方向上的召回，都需要在输出层之前要加一层softmax，作用就是为了将隐藏层的输出转化为一个相当于输出个数为标签类别数的概率值。softmax可以很好的针对离散值进行训练及预测。</p>
+
+<h1><span id="li-lun-ji-chu">理论基础</span><a href="#li-lun-ji-chu" class="header-anchor"> </a></h1><p>softmax函数在深度学习领域应用非常广，不论是卷积神经网络CNN在做图像分类时，还是循环神经网络在自然语言处理方向为文章分类，又或者是在推荐系统方向上的召回，都需要在输出层之前要加一层softmax，作用就是为了将隐藏层的输出转化为一个相当于输出个数为标签类别数的概率值。softmax可以很好的针对离散值进行训练及预测。</p>
 <p>softmax回归同线性回归一样，也是一个单层神经网络。由于每个输出𝑜1,𝑜2,𝑜3的计算都要依赖于所有的输入𝑥1,𝑥2,𝑥3,𝑥4x1,x2,x3,x4，softmax回归的输出层也是一个全连接层。</p>
-<p><img src="/images/softmax/softmaxreg.svg"></p>
+<p><img src="/images/softmax/softmaxreg.svg" alt></p>
 <p>如果直接使用输出层的输出有两个问题。一方面，由于<strong>输出层的输出值的范围不确定</strong>，我们难以直观上判断这些值的意义。另一方面，由于<strong>真实标签是离散值</strong>，这些离散值与不确定范围的输出值之间的<strong>误差难以衡量</strong>。</p>
-<p>softmax运算符（softmax operator）解决了以上两个问题。它通过下式将输出值变换成值为正且和为1的概率分布： <span class="math display">\[
-\hat{y}_1, \hat{y}_2, \hat{y}_3 = \text{softmax}(o_1, o_2, o_3),
-\]</span> 其中 <span class="math display">\[
+<p>softmax运算符（softmax operator）解决了以上两个问题。它通过下式将输出值变换成值为正且和为1的概率分布：</p>
+<script type="math/tex; mode=display">
+\hat{y}_1, \hat{y}_2, \hat{y}_3 = \text{softmax}(o_1, o_2, o_3),</script><p>其中</p>
+<script type="math/tex; mode=display">
 \hat{y}_1 = \frac{ \exp(o_1)}{\sum_{i=1}^3 \exp(o_i)},\quad
 \hat{y}_2 = \frac{ \exp(o_2)}{\sum_{i=1}^3 \exp(o_i)},\quad
-\hat{y}_3 = \frac{ \exp(o_3)}{\sum_{i=1}^3 \exp(o_i)}.
-\]</span></p>
-<p>容易看出𝑦̂1+𝑦̂2+𝑦̂3=1且0≤𝑦̂1,𝑦̂2,𝑦̂3≤1，因此𝑦̂1,𝑦̂2,𝑦̂3是一个合法的概率分布。这时候，如果𝑦̂2=0.8，不管𝑦̂1和𝑦̂3的值是多少，我们都知道图像类别为猫的概率是80%。此外，我们注意到 <span class="math inline">\(\operatorname*{argmax}_i o_i = \operatorname*{argmax}_i \hat y_i，\)</span>因此<strong>softmax运算不改变预测类别输出</strong>。</p>
-<h2><span id="softmax-shi-liang-ji-suan">softmax矢量计算</span><a href="#softmax-shi-liang-ji-suan" class="header-anchor"> </a></h2>
-<p><span class="math display">\[
+\hat{y}_3 = \frac{ \exp(o_3)}{\sum_{i=1}^3 \exp(o_i)}.</script><p>容易看出𝑦̂1+𝑦̂2+𝑦̂3=1且0≤𝑦̂1,𝑦̂2,𝑦̂3≤1，因此𝑦̂1,𝑦̂2,𝑦̂3是一个合法的概率分布。这时候，如果𝑦̂2=0.8，不管𝑦̂1和𝑦̂3的值是多少，我们都知道图像类别为猫的概率是80%。此外，我们注意到 $\operatorname<em>{argmax}_i o_i = \operatorname</em>{argmax}_i \hat y_i，$因此<strong>softmax运算不改变预测类别输出</strong>。</p>
+<h2><span id="softmax-shi-liang-ji-suan">softmax矢量计算</span><a href="#softmax-shi-liang-ji-suan" class="header-anchor"> </a></h2><script type="math/tex; mode=display">
 \begin{aligned}
-\boldsymbol{O} &amp;= \boldsymbol{X} \boldsymbol{W} + \boldsymbol{b},\\
-\boldsymbol{\hat{Y}} &amp;= \text{softmax}(\boldsymbol{O}),
-\end{aligned}
-\]</span></p>
-<h2><span id="jiao-cha-shang-sun-shi-han-shu">交叉熵损失函数</span><a href="#jiao-cha-shang-sun-shi-han-shu" class="header-anchor"> </a></h2>
-<p>我们可以像线性回归那样使用平方损失函数‖𝒚̂(𝑖)−𝒚(𝑖)‖2/2。然而，想要预测分类结果正确，我们其实<strong>并不需要预测概率完全等于标签概率</strong>。例如，在图像分类的例子里，如果𝑦(𝑖)=3，那么我们只需要𝑦̂(𝑖)3比其他两个预测值𝑦̂(𝑖)1和𝑦̂(𝑖)2大就行了。即使𝑦̂(𝑖)3值为0.6，不管其他两个预测值为多少，类别预测均正确。而<strong>平方损失则过于严格</strong>，例如𝑦̂(𝑖)1=𝑦̂(𝑖)2=0.2比𝑦̂(𝑖)1=0,𝑦̂(𝑖)2=0.4的损失要小很多，虽然两者都有同样正确的分类预测结果。</p>
-<p>改善上述问题的一个方法是使用更适合衡量两个概率分布差异的测量函数。其中，交叉熵（cross entropy）是一个常用的衡量方法： <span class="math display">\[
-\ell(\boldsymbol{\Theta}) = \frac{1}{n} \sum_{i=1}^n H\left(\boldsymbol y^{(i)}, \boldsymbol {\hat y}^{(i)}\right )
-\]</span> 交叉熵只关心对正确类别的预测概率，因为只要其值足够大，就可以确保分类结果正确。当然，遇到一个样本有多个标签时，例如图像里含有不止一个物体时，我们并不能做这一步简化。但即便对于这种情况，交叉熵同样只关心对图像中出现的物体类别的预测概率。</p>
-<p>假设训练数据集的样本数为<span class="math inline">\(n\)</span>，交叉熵损失函数定义为 <span class="math display">\[
-\ell(\boldsymbol{\Theta}) = \frac{1}{n} \sum_{i=1}^n H\left(\boldsymbol y^{(i)}, \boldsymbol {\hat y}^{(i)}\right )
-\]</span> 其中<span class="math inline">\(\boldsymbol{\Theta}\)</span>代表模型参数。同样地，如果每个样本只有一个标签，那么交叉熵损失可以简写成<span class="math inline">\(\ell(\boldsymbol{\Theta}) = -(1/n) \sum_{i=1}^n \log \hat y_{y^{(i)}}^{(i)}\)</span>。从另一个角度来看，我们知道最小化<span class="math inline">\(\ell(\boldsymbol{\Theta})\)</span>等价于最大化<span class="math inline">\(\exp(-n\ell(\boldsymbol{\Theta}))=\prod_{i=1}^n \hat y_{y^{(i)}}^{(i)}\)</span>，即<strong>最小化交叉熵损失函数等价于最大化训练数据集所有标签类别的联合预测概率</strong>。</p>
-<h1><span id="dai-ma-shi-jian">代码实践</span><a href="#dai-ma-shi-jian" class="header-anchor"> </a></h1>
-<p>首先导入本节实现所需的包或模块。</p>
+\boldsymbol{O} &= \boldsymbol{X} \boldsymbol{W} + \boldsymbol{b},\\
+\boldsymbol{\hat{Y}} &= \text{softmax}(\boldsymbol{O}),
+\end{aligned}</script><h2><span id="jiao-cha-shang-sun-shi-han-shu">交叉熵损失函数</span><a href="#jiao-cha-shang-sun-shi-han-shu" class="header-anchor"> </a></h2><p>我们可以像线性回归那样使用平方损失函数‖𝒚̂(𝑖)−𝒚(𝑖)‖2/2。然而，想要预测分类结果正确，我们其实<strong>并不需要预测概率完全等于标签概率</strong>。例如，在图像分类的例子里，如果𝑦(𝑖)=3，那么我们只需要𝑦̂(𝑖)3比其他两个预测值𝑦̂(𝑖)1和𝑦̂(𝑖)2大就行了。即使𝑦̂(𝑖)3值为0.6，不管其他两个预测值为多少，类别预测均正确。而<strong>平方损失则过于严格</strong>，例如𝑦̂(𝑖)1=𝑦̂(𝑖)2=0.2比𝑦̂(𝑖)1=0,𝑦̂(𝑖)2=0.4的损失要小很多，虽然两者都有同样正确的分类预测结果。</p>
+<p>改善上述问题的一个方法是使用更适合衡量两个概率分布差异的测量函数。其中，交叉熵（cross entropy）是一个常用的衡量方法：</p>
+<script type="math/tex; mode=display">
+\ell(\boldsymbol{\Theta}) = \frac{1}{n} \sum_{i=1}^n H\left(\boldsymbol y^{(i)}, \boldsymbol {\hat y}^{(i)}\right )</script><p>交叉熵只关心对正确类别的预测概率，因为只要其值足够大，就可以确保分类结果正确。当然，遇到一个样本有多个标签时，例如图像里含有不止一个物体时，我们并不能做这一步简化。但即便对于这种情况，交叉熵同样只关心对图像中出现的物体类别的预测概率。</p>
+<p>假设训练数据集的样本数为$n$，交叉熵损失函数定义为</p>
+<script type="math/tex; mode=display">
+\ell(\boldsymbol{\Theta}) = \frac{1}{n} \sum_{i=1}^n H\left(\boldsymbol y^{(i)}, \boldsymbol {\hat y}^{(i)}\right )</script><p>其中$\boldsymbol{\Theta}$代表模型参数。同样地，如果每个样本只有一个标签，那么交叉熵损失可以简写成$\ell(\boldsymbol{\Theta}) = -(1/n)  \sum<em>{i=1}^n \log \hat y</em>{y^{(i)}}^{(i)}$。从另一个角度来看，我们知道最小化$\ell(\boldsymbol{\Theta})$等价于最大化$\exp(-n\ell(\boldsymbol{\Theta}))=\prod<em>{i=1}^n \hat y</em>{y^{(i)}}^{(i)}$，即<strong>最小化交叉熵损失函数等价于最大化训练数据集所有标签类别的联合预测概率</strong>。</p>
+<h1><span id="dai-ma-shi-jian">代码实践</span><a href="#dai-ma-shi-jian" class="header-anchor"> </a></h1><p>首先导入本节实现所需的包或模块。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> autograd, nd</span><br></pre></td></tr></table></figure>
 <p>我们使用Fashion-MNIST数据集，并设置批量大小为256。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">batch_size = <span class="number">256</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)</span><br></pre></td></tr></table></figure>
@@ -252,43 +241,36 @@ softmax函数在深度学习领域应用非常广，不论是卷积神经网络C
  [[0.6264712  0.126293   0.01826552 0.10885343 0.12011679]
   [0.25569436 0.2917251  0.0754655  0.3024068  0.07470828]]
  &lt;NDArray 2x5 @cpu(0)&gt;,
- 
+
  [0.99999994 1.        ]
- &lt;NDArray 2 @cpu(0)&gt;)</code></pre>
-<h2><span id="ding-yi-mo-xing">定义模型</span><a href="#ding-yi-mo-xing" class="header-anchor"> </a></h2>
-<p>有了softmax运算，我们可以定义上节描述的softmax回归模型了。这里通过<code>reshape</code>函数将每张原始图像改成长度为<code>num_inputs</code>的向量。</p>
+ &lt;NDArray 2 @cpu(0)&gt;)
+</code></pre><h2><span id="ding-yi-mo-xing">定义模型</span><a href="#ding-yi-mo-xing" class="header-anchor"> </a></h2><p>有了softmax运算，我们可以定义上节描述的softmax回归模型了。这里通过<code>reshape</code>函数将每张原始图像改成长度为<code>num_inputs</code>的向量。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">net</span>(<span class="params">X</span>):</span></span><br><span class="line">    <span class="keyword">return</span> softmax(nd.dot(X.reshape((-<span class="number">1</span>, num_inputs)), W) + b)</span><br></pre></td></tr></table></figure>
-<h2><span id="ding-yi-sun-shi-han-shu">定义损失函数</span><a href="#ding-yi-sun-shi-han-shu" class="header-anchor"> </a></h2>
-<p>softmax回归使用交叉熵损失函数。为了得到标签的预测概率，我们可以使用<code>pick</code>函数。在下面的例子中，变量<code>y_hat</code>是2个样本在3个类别的预测概率，变量<code>y</code>是这2个样本的标签类别。通过使用<code>pick</code>函数，我们得到了2个样本的标签的预测概率。</p>
+<h2><span id="ding-yi-sun-shi-han-shu">定义损失函数</span><a href="#ding-yi-sun-shi-han-shu" class="header-anchor"> </a></h2><p>softmax回归使用交叉熵损失函数。为了得到标签的预测概率，我们可以使用<code>pick</code>函数。在下面的例子中，变量<code>y_hat</code>是2个样本在3个类别的预测概率，变量<code>y</code>是这2个样本的标签类别。通过使用<code>pick</code>函数，我们得到了2个样本的标签的预测概率。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">y_hat = nd.array([[<span class="number">0.1</span>, <span class="number">0.3</span>, <span class="number">0.6</span>], [<span class="number">0.3</span>, <span class="number">0.2</span>, <span class="number">0.5</span>]])</span><br><span class="line">y = nd.array([<span class="number">0</span>, <span class="number">2</span>], dtype=<span class="string">&#x27;int32&#x27;</span>)</span><br><span class="line">nd.pick(y_hat, y)</span><br></pre></td></tr></table></figure>
 <pre><code>[0.1 0.5]
-&lt;NDArray 2 @cpu(0)&gt;</code></pre>
-<p>交叉熵损失函数:</p>
+&lt;NDArray 2 @cpu(0)&gt;
+</code></pre><p>交叉熵损失函数:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cross_entropy</span>(<span class="params">y_hat, y</span>):</span></span><br><span class="line">    <span class="keyword">return</span> -nd.pick(y_hat, y).log()</span><br></pre></td></tr></table></figure>
-<h2><span id="ji-suan-fen-lei-zhun-que-lu">计算分类准确率</span><a href="#ji-suan-fen-lei-zhun-que-lu" class="header-anchor"> </a></h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">accuracy</span>(<span class="params">y_hat, y</span>):</span></span><br><span class="line">    <span class="keyword">return</span> (y_hat.argmax(axis=<span class="number">1</span>) == y.astype(<span class="string">&#x27;float32&#x27;</span>)).mean().asscalar()</span><br></pre></td></tr></table></figure>
+<h2><span id="ji-suan-fen-lei-zhun-que-lu">计算分类准确率</span><a href="#ji-suan-fen-lei-zhun-que-lu" class="header-anchor"> </a></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">accuracy</span>(<span class="params">y_hat, y</span>):</span></span><br><span class="line">    <span class="keyword">return</span> (y_hat.argmax(axis=<span class="number">1</span>) == y.astype(<span class="string">&#x27;float32&#x27;</span>)).mean().asscalar()</span><br></pre></td></tr></table></figure>
 <p>我们继续使用在演示<code>pick</code>函数时定义的变量<code>y_hat</code>和<code>y</code>，并将它们分别作为预测概率分布和标签。可以看到，第一个样本预测类别为2（该行最大元素0.6在本行的索引为2），与真实标签0不一致；第二个样本预测类别为2（该行最大元素0.5在本行的索引为2），与真实标签2一致。因此，这两个样本上的分类准确率为0.5。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">accuracy(y_hat, y) <span class="comment"># 0.5</span></span><br></pre></td></tr></table></figure>
 <p>类似地，我们可以评价模型<code>net</code>在数据集<code>data_iter</code>上的准确率。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 本函数已保存在d2lzh包中方便以后使用。该函数将被逐步改进：它的完整实现将在“图像增广”一节中</span></span><br><span class="line"><span class="comment"># 描述</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">evaluate_accuracy</span>(<span class="params">data_iter, net</span>):</span></span><br><span class="line">    acc_sum, n = <span class="number">0.0</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> X, y <span class="keyword">in</span> data_iter:</span><br><span class="line">        y = y.astype(<span class="string">&#x27;float32&#x27;</span>)</span><br><span class="line">        acc_sum += (net(X).argmax(axis=<span class="number">1</span>) == y).<span class="built_in">sum</span>().asscalar()</span><br><span class="line">        n += y.size</span><br><span class="line">    <span class="keyword">return</span> acc_sum / n</span><br></pre></td></tr></table></figure>
 <p>因为我们随机初始化了模型<code>net</code>，所以这个随机模型的准确率应该接近于类别个数10的倒数0.1。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">evaluate_accuracy(test_iter, net) <span class="comment"># 0.0856</span></span><br></pre></td></tr></table></figure>
-<h2><span id="xun-lian-mo-xing">训练模型</span><a href="#xun-lian-mo-xing" class="header-anchor"> </a></h2>
-<p>我们使用小批量随机梯度下降来优化模型的损失函数。在训练模型时，迭代周期数<code>num_epochs</code>和学习率<code>lr</code>都是可以调的超参数。改变它们的值可能会得到分类更准确的模型。</p>
+<h2><span id="xun-lian-mo-xing">训练模型</span><a href="#xun-lian-mo-xing" class="header-anchor"> </a></h2><p>我们使用小批量随机梯度下降来优化模型的损失函数。在训练模型时，迭代周期数<code>num_epochs</code>和学习率<code>lr</code>都是可以调的超参数。改变它们的值可能会得到分类更准确的模型。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">num_epochs, lr = <span class="number">5</span>, <span class="number">0.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 本函数已保存在d2lzh包中方便以后使用</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_ch3</span>(<span class="params">net, train_iter, test_iter, loss, num_epochs, batch_size,</span></span></span><br><span class="line"><span class="function"><span class="params">              params=<span class="literal">None</span>, lr=<span class="literal">None</span>, trainer=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">        train_l_sum, train_acc_sum, n = <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> train_iter:</span><br><span class="line">            <span class="keyword">with</span> autograd.record():</span><br><span class="line">                y_hat = net(X)</span><br><span class="line">                l = loss(y_hat, y).<span class="built_in">sum</span>()</span><br><span class="line">            l.backward()</span><br><span class="line">            <span class="keyword">if</span> trainer <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                d2l.sgd(params, lr, batch_size)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                trainer.step(batch_size)  <span class="comment"># “softmax回归的简洁实现”一节将用到</span></span><br><span class="line">            y = y.astype(<span class="string">&#x27;float32&#x27;</span>)</span><br><span class="line">            train_l_sum += l.asscalar()</span><br><span class="line">            train_acc_sum += (y_hat.argmax(axis=<span class="number">1</span>) == y).<span class="built_in">sum</span>().asscalar()</span><br><span class="line">            n += y.size</span><br><span class="line">        test_acc = evaluate_accuracy(test_iter, net)</span><br><span class="line">        print(<span class="string">&#x27;epoch %d, loss %.4f, train acc %.3f, test acc %.3f&#x27;</span></span><br><span class="line">              % (epoch + <span class="number">1</span>, train_l_sum / n, train_acc_sum / n, test_acc))</span><br><span class="line"></span><br><span class="line">train_ch3(net, train_iter, test_iter, cross_entropy, num_epochs, batch_size,</span><br><span class="line">          [W, b], lr)</span><br></pre></td></tr></table></figure>
 <pre><code>epoch 1, loss 0.7898, train acc 0.745, test acc 0.808
 epoch 2, loss 0.5736, train acc 0.811, test acc 0.818
 epoch 3, loss 0.5294, train acc 0.824, test acc 0.834
 epoch 4, loss 0.5055, train acc 0.830, test acc 0.837
-epoch 5, loss 0.4892, train acc 0.834, test acc 0.840</code></pre>
-<h2><span id="yu-ce">预测</span><a href="#yu-ce" class="header-anchor"> </a></h2>
-<p>训练完成后，现在就可以演示如何对图像进行分类了。给定一系列图像（第三行图像输出），我们比较一下它们的真实标签（第一行文本输出）和模型预测结果（第二行文本输出）。</p>
+epoch 5, loss 0.4892, train acc 0.834, test acc 0.840
+</code></pre><h2><span id="yu-ce">预测</span><a href="#yu-ce" class="header-anchor"> </a></h2><p>训练完成后，现在就可以演示如何对图像进行分类了。给定一系列图像（第三行图像输出），我们比较一下它们的真实标签（第一行文本输出）和模型预测结果（第二行文本输出）。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> X, y <span class="keyword">in</span> test_iter:</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">true_labels = d2l.get_fashion_mnist_labels(y.asnumpy())</span><br><span class="line">pred_labels = d2l.get_fashion_mnist_labels(net(X).argmax(axis=<span class="number">1</span>).asnumpy())</span><br><span class="line">titles = [true + <span class="string">&#x27;\n&#x27;</span> + pred <span class="keyword">for</span> true, pred <span class="keyword">in</span> <span class="built_in">zip</span>(true_labels, pred_labels)]</span><br><span class="line"></span><br><span class="line">d2l.show_fashion_mnist(X[<span class="number">0</span>:<span class="number">9</span>], titles[<span class="number">0</span>:<span class="number">9</span>])</span><br></pre></td></tr></table></figure>
-<p><img src="/images/softmax/output_31_0.svg"></p>
-<h1><span id="jian-ji-shi-xian">简洁实现</span><a href="#jian-ji-shi-xian" class="header-anchor"> </a></h1>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> gluon, init</span><br><span class="line"><span class="keyword">from</span> mxnet.gluon <span class="keyword">import</span> loss <span class="keyword">as</span> gloss, nn</span><br><span class="line"></span><br><span class="line">batch_size = <span class="number">256</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)</span><br><span class="line">net = nn.Sequential()</span><br><span class="line"><span class="comment">#输出个数为10的全连接层</span></span><br><span class="line">net.add(nn.Dense(<span class="number">10</span>))</span><br><span class="line"><span class="comment">#均值为0、标准差为0.01的正态分布随机初始化模型的权重参数</span></span><br><span class="line">net.initialize(init.Normal(sigma=<span class="number">0.01</span>))</span><br><span class="line"><span class="comment">#分开定义softmax运算和交叉熵损失函数可能会造成数值不稳定</span></span><br><span class="line">loss = gloss.SoftmaxCrossEntropyLoss()</span><br><span class="line"><span class="comment">#使用学习率为0.1的小批量随机梯度下降sgd作为优化算法。</span></span><br><span class="line">trainer = gluon.Trainer(net.collect_params(), <span class="string">&#x27;sgd&#x27;</span>, &#123;<span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">0.1</span>&#125;)</span><br><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line">d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, <span class="literal">None</span>,</span><br><span class="line">              <span class="literal">None</span>, trainer)</span><br></pre></td></tr></table></figure>
-<h2><span id="xiao-jie">小结</span><a href="#xiao-jie" class="header-anchor"> </a></h2>
-<ul>
+<p><img src="/images/softmax/output_31_0.svg" alt></p>
+<h1><span id="jian-ji-shi-xian">简洁实现</span><a href="#jian-ji-shi-xian" class="header-anchor"> </a></h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> d2lzh <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">from</span> mxnet <span class="keyword">import</span> gluon, init</span><br><span class="line"><span class="keyword">from</span> mxnet.gluon <span class="keyword">import</span> loss <span class="keyword">as</span> gloss, nn</span><br><span class="line"></span><br><span class="line">batch_size = <span class="number">256</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)</span><br><span class="line">net = nn.Sequential()</span><br><span class="line"><span class="comment">#输出个数为10的全连接层</span></span><br><span class="line">net.add(nn.Dense(<span class="number">10</span>))</span><br><span class="line"><span class="comment">#均值为0、标准差为0.01的正态分布随机初始化模型的权重参数</span></span><br><span class="line">net.initialize(init.Normal(sigma=<span class="number">0.01</span>))</span><br><span class="line"><span class="comment">#分开定义softmax运算和交叉熵损失函数可能会造成数值不稳定</span></span><br><span class="line">loss = gloss.SoftmaxCrossEntropyLoss()</span><br><span class="line"><span class="comment">#使用学习率为0.1的小批量随机梯度下降sgd作为优化算法。</span></span><br><span class="line">trainer = gluon.Trainer(net.collect_params(), <span class="string">&#x27;sgd&#x27;</span>, &#123;<span class="string">&#x27;learning_rate&#x27;</span>: <span class="number">0.1</span>&#125;)</span><br><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line">d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, <span class="literal">None</span>,</span><br><span class="line">              <span class="literal">None</span>, trainer)</span><br></pre></td></tr></table></figure>
+<h2><span id="xiao-jie">小结</span><a href="#xiao-jie" class="header-anchor"> </a></h2><ul>
 <li>可以使用softmax回归做多类别分类。与训练线性回归相比，你会发现训练softmax回归的步骤和它非常相似：获取并读取数据、定义模型和损失函数并使用优化算法训练模型。事实上，绝大多数深度学习模型的训练都有着类似的步骤。</li>
 </ul>
 

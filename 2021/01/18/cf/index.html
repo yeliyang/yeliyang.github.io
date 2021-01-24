@@ -12,22 +12,19 @@
     
         <meta name="description" content="引言
 基础知识
-
 用户相似度计算
 结果排序
 物品相似度
 协同过滤的优缺点
+
 
 小结
 
 
 
 
-
-引言 
-协同过滤最早由Xerox研究中心在1992年开发用于邮件筛选系统，直到后来Amazon将协同过滤用于推荐系统才让它大放光彩。
-基础知识 
-协同过滤就是协同大家的反馈、评价和意见一起对海量的信息进行过滤">
+引言 协同过滤最早由Xerox研究中心在1992年开发用于邮件筛选系统，直到后来Amazon将协同过滤用于推荐系统才让它大放光彩。
+基础知识 协同过滤就是协同大家的反馈、评价和意见一起对海量的信息进行过滤，从中">
     
 
     <!--Author-->
@@ -169,108 +166,103 @@
 
 
 <!-- Content -->
-<div class="tocStart">
+<div class="toc">
 
-</div>
 <!-- toc -->
 <ul>
 <li><a href="#yin-yan">引言</a></li>
-<li><a href="#ji-chu-zhi-shi">基础知识</a>
-<ul>
+<li><a href="#ji-chu-zhi-shi">基础知识</a><ul>
 <li><a href="#yong-hu-xiang-si-du-ji-suan">用户相似度计算</a></li>
 <li><a href="#jie-guo-pai-xu">结果排序</a></li>
 <li><a href="#wu-pin-xiang-si-du">物品相似度</a></li>
 <li><a href="#xie-tong-guo-lu-de-you-que-dian">协同过滤的优缺点</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#xiao-jie">小结</a></li>
 </ul>
 <!-- tocstop -->
-<div class="tocEnd">
-
 </div>
-<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1>
-<p>协同过滤最早由Xerox研究中心在1992年开发用于邮件筛选系统，直到后来Amazon将协同过滤用于推荐系统才让它大放光彩。</p>
-<h1><span id="ji-chu-zhi-shi">基础知识</span><a href="#ji-chu-zhi-shi" class="header-anchor"> </a></h1>
-<p><code>协同过滤</code>就是协同大家的反馈、评价和意见一起对海量的信息进行过滤，从中筛选出目标用户可能感兴趣的信息的推荐过程。</p>
-<h2><span id="yong-hu-xiang-si-du-ji-suan">用户相似度计算</span><a href="#yong-hu-xiang-si-du-ji-suan" class="header-anchor"> </a></h2>
+
+<h1><span id="yin-yan">引言</span><a href="#yin-yan" class="header-anchor"> </a></h1><p>协同过滤最早由Xerox研究中心在1992年开发用于邮件筛选系统，直到后来Amazon将协同过滤用于推荐系统才让它大放光彩。</p>
+<h1><span id="ji-chu-zhi-shi">基础知识</span><a href="#ji-chu-zhi-shi" class="header-anchor"> </a></h1><p><code>协同过滤</code>就是协同大家的反馈、评价和意见一起对海量的信息进行过滤，从中筛选出目标用户可能感兴趣的信息的推荐过程。</p>
+<h2><span id="yong-hu-xiang-si-du-ji-suan">用户相似度计算</span><a href="#yong-hu-xiang-si-du-ji-suan" class="header-anchor"> </a></h2><div class="table-container">
 <table>
 <thead>
-<tr class="header">
-<th style="text-align: center;"></th>
-<th style="text-align: center;">Car</th>
-<th style="text-align: center;">House</th>
-<th style="text-align: center;">Game</th>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">Car</th>
+<th style="text-align:center">House</th>
+<th style="text-align:center">Game</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td style="text-align: center;">🤷‍♂️A</td>
-<td style="text-align: center;">😊</td>
-<td style="text-align: center;">😊</td>
-<td style="text-align: center;">❓</td>
+<tr>
+<td style="text-align:center">🤷‍♂️A</td>
+<td style="text-align:center">😊</td>
+<td style="text-align:center">😊</td>
+<td style="text-align:center">❓</td>
 </tr>
-<tr class="even">
-<td style="text-align: center;">🤷‍♂️B</td>
-<td style="text-align: center;">😫</td>
-<td style="text-align: center;">😫</td>
-<td style="text-align: center;">😊</td>
+<tr>
+<td style="text-align:center">🤷‍♂️B</td>
+<td style="text-align:center">😫</td>
+<td style="text-align:center">😫</td>
+<td style="text-align:center">😊</td>
 </tr>
-<tr class="odd">
-<td style="text-align: center;">🤷‍♀️C</td>
-<td style="text-align: center;">😫</td>
-<td style="text-align: center;">😊</td>
-<td style="text-align: center;">😫</td>
+<tr>
+<td style="text-align:center">🤷‍♀️C</td>
+<td style="text-align:center">😫</td>
+<td style="text-align:center">😊</td>
+<td style="text-align:center">😫</td>
 </tr>
-<tr class="even">
-<td style="text-align: center;">🤷‍♂️D</td>
-<td style="text-align: center;">😊</td>
-<td style="text-align: center;"></td>
-<td style="text-align: center;">😊</td>
+<tr>
+<td style="text-align:center">🤷‍♂️D</td>
+<td style="text-align:center">😊</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">😊</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>可以看到，用户、商品和评价记录构成了带有标识的矩阵。可以看到用户A和用户D的兴趣相似，那么可以预测知道用户A对Game的态度是😊。</p>
-<p>用户相似度计算是算法中最重要的一步。共现矩阵中的行向量代表相应用户的用户向量。那么计算用户i和用户j地相似度问题，就是<strong>计算用户向量<span class="math inline">\(i\)</span>和用户向量<span class="math inline">\(j\)</span>之间的相似度</strong>，两个向量之间的相似度计算方法主要有：</p>
-<ol type="1">
-<li><p><strong>余弦相似度</strong>。余弦相似度（Cosine Similarity）衡量了用户向量<span class="math inline">\(i\)</span>和用户向量<span class="math inline">\(j\)</span>之间的向量夹角大小。<strong>夹角越小，证明余弦相似度越大，两个用户越相似</strong>。 <span class="math display">\[
-sim(i,j) = cos(i,j) = \frac{i·j} {||i||·||j||}
-\]</span></p></li>
-<li><p><strong>皮尔逊相关系数</strong>。相比余弦相似度，皮尔逊相关系数通过<strong>使用用户平均分对各独立评分进行修正</strong>，<strong>减小了用户评分偏置的影响</strong>。 <span class="math display">\[
-sim(i,j)=\frac{\sum_{p \in P}(R_{i,p} - \bar{R}_i)(R_{j,p} - \bar{R}_j)}{\sqrt{\sum_{p \in P}(R_{i,p} - \bar{R}_i)^2}\sqrt{\sum_{p \in P}(R_{j,p} - \bar{R}_j)^2}}
-\]</span> 其中，<span class="math inline">\(R_{i,p}\)</span>代表用户i对物品p的评分。<span class="math inline">\(\hat{R}_i\)</span>代表用户i对所有物品的平均评分，p代表所有物品的集合。</p></li>
-<li><p>基于皮尔逊系数的思路，还可以引入<strong>物品平均分</strong>的方式来<strong>减少物品评分偏置对结果的影响</strong>。 <span class="math display">\[
-sim(i,j)=\frac{\sum_{p \in P}(R_{i,p} - \overline{R}_p)(R_{j,p} - \overline{R}_p)}{\sqrt{\sum_{p \in P}(R_{i,p} - \overline{R}_p)^2}\sqrt{\sum_{p \in P}(R_{j,p} - \overline{R}_p)^2}}
-\]</span> 其中，<span class="math inline">\(\overline{R}_p\)</span>代表物品p得到所有评分的平均分。</p></li>
+<p>用户相似度计算是算法中最重要的一步。共现矩阵中的行向量代表相应用户的用户向量。那么计算用户i和用户j地相似度问题，就是<strong>计算用户向量$i$和用户向量$j$之间的相似度</strong>，两个向量之间的相似度计算方法主要有：</p>
+<ol>
+<li><p><strong>余弦相似度</strong>。余弦相似度（Cosine Similarity）衡量了用户向量$i$和用户向量$j$之间的向量夹角大小。<strong>夹角越小，证明余弦相似度越大，两个用户越相似</strong>。</p>
+<script type="math/tex; mode=display">
+sim(i,j) = cos(i,j) = \frac{i·j} {||i||·||j||}</script></li>
+<li><p><strong>皮尔逊相关系数</strong>。相比余弦相似度，皮尔逊相关系数通过<strong>使用用户平均分对各独立评分进行修正</strong>，<strong>减小了用户评分偏置的影响</strong>。</p>
+<script type="math/tex; mode=display">
+sim(i,j)=\frac{\sum_{p \in P}(R_{i,p} - \bar{R}_i)(R_{j,p} - \bar{R}_j)}{\sqrt{\sum_{p \in P}(R_{i,p} - \bar{R}_i)^2}\sqrt{\sum_{p \in P}(R_{j,p} - \bar{R}_j)^2}}</script><p>其中，$R_{i,p}$代表用户i对物品p的评分。$\hat{R}_i$代表用户i对所有物品的平均评分，p代表所有物品的集合。</p>
+</li>
+<li><p>基于皮尔逊系数的思路，还可以引入<strong>物品平均分</strong>的方式来<strong>减少物品评分偏置对结果的影响</strong>。</p>
+<script type="math/tex; mode=display">
+sim(i,j)=\frac{\sum_{p \in P}(R_{i,p} - \overline{R}_p)(R_{j,p} - \overline{R}_p)}{\sqrt{\sum_{p \in P}(R_{i,p} - \overline{R}_p)^2}\sqrt{\sum_{p \in P}(R_{j,p} - \overline{R}_p)^2}}</script><p>其中，$\overline{R}_p$代表物品p得到所有评分的平均分。</p>
+</li>
 </ol>
-<h2><span id="jie-guo-pai-xu">结果排序</span><a href="#jie-guo-pai-xu" class="header-anchor"> </a></h2>
-<p>获得TopN相似用户后，利用TopN用户生成最终排序结果。最常用的方式是利用用户相似度和相似用户的评价的加权平均获得目标用户的评价预测： <span class="math display">\[
-R_{u,p}=\frac{ \sum_{s \in S}(W_{u,s}·R_{s,p})}{\sum_{s \in S}{W_{u,s}}}
-\]</span> 其中，权重<span class="math inline">\(w\_{u,s}\)</span>是用户<span class="math inline">\(u\)</span>和用户<span class="math inline">\(s\)</span>的相似度，<span class="math inline">\(R_{s,p}\)</span>是用户<span class="math inline">\(s\)</span>对物品<span class="math inline">\(p\)</span>的评分。</p>
+<h2><span id="jie-guo-pai-xu">结果排序</span><a href="#jie-guo-pai-xu" class="header-anchor"> </a></h2><p>获得TopN相似用户后，利用TopN用户生成最终排序结果。最常用的方式是利用用户相似度和相似用户的评价的加权平均获得目标用户的评价预测：</p>
+<script type="math/tex; mode=display">
+R_{u,p}=\frac{ \sum_{s \in S}(W_{u,s}·R_{s,p})}{\sum_{s \in S}{W_{u,s}}}</script><p>其中，权重$w_{u,s}$是用户$u$和用户$s$的相似度，$R_{s,p}$是用户$s$对物品$p$的评分。</p>
 <p>以上介绍的协同算法属于基于用户的协同过滤（UserCF），它存在一些缺点：</p>
-<ol type="1">
-<li>互联网应用场景下，<strong>用户数往往大于物品数</strong>。随着用户数的增长，会导致存储空间以<span class="math inline">\(n^2\)</span>的速度快速增长。</li>
+<ol>
+<li>互联网应用场景下，<strong>用户数往往大于物品数</strong>。随着用户数的增长，会导致存储空间以$n^2$的速度快速增长。</li>
 <li>用户历史数据稀疏，对于只有几次购买的用户来说，找到相似用户的准确度是非常低的。<strong>不适用于</strong>酒店预订、家电购买等<strong>低频应用</strong>。</li>
 </ol>
 <p>应用场景：</p>
 <p>由于UserCF基于用户相似度进行推荐，使其具备更强的社交特性。用户能够快速得知与自己兴趣相似的人最近喜欢的是什么。这样的特点使其非常适用于新闻推荐场景。UserCF正适用于发现热点，以及跟踪热点的趋势。</p>
-<h2><span id="wu-pin-xiang-si-du">物品相似度</span><a href="#wu-pin-xiang-si-du" class="header-anchor"> </a></h2>
-<p>基于物品相似度的协同算法（ItemCF）是通过计算物品列向量的相似度得到物品之间的相似矩阵，再找到用户的历史正反馈物品的相似物品进行进一步排序和推荐，具体步骤：</p>
-<ol type="1">
+<h2><span id="wu-pin-xiang-si-du">物品相似度</span><a href="#wu-pin-xiang-si-du" class="header-anchor"> </a></h2><p>基于物品相似度的协同算法（ItemCF）是通过计算物品列向量的相似度得到物品之间的相似矩阵，再找到用户的历史正反馈物品的相似物品进行进一步排序和推荐，具体步骤：</p>
+<ol>
 <li>基于历史数据，构建共现矩阵。</li>
 <li>计算两两列向量间的相似性。</li>
 <li>获得用户历史行为数据中的正反馈物品列表。</li>
 <li>利用物品相似度矩阵，针对目标用户历史行为中的正反馈物品，找出相似的Topk个物品，组成相似物品集合。</li>
 <li>对物品进行相似度分值排序，生成最终推荐结果。</li>
 </ol>
-<p>如果一个物品与多个用户行为历史中的正反馈物品相似，该物品最终相似度是多个相似度的累加： <span class="math display">\[
-R_{u,p}=\sum_{h \in H}(w_{p,h}·R_{u,h})
-\]</span> 其中<span class="math inline">\(H\)</span>是目标用户的正反馈物品集合，<span class="math inline">\(w_{p,h}\)</span>是物品<span class="math inline">\(p\)</span>与物品<span class="math inline">\(h\)</span>的物品相似度，<span class="math inline">\(R\_{u,h}\)</span>是用户<span class="math inline">\(u\)</span>对物品<span class="math inline">\(h\)</span>的已有评分。</p>
+<p>如果一个物品与多个用户行为历史中的正反馈物品相似，该物品最终相似度是多个相似度的累加：</p>
+<script type="math/tex; mode=display">
+R_{u,p}=\sum_{h \in H}(w_{p,h}·R_{u,h})</script><p>其中$H$是目标用户的正反馈物品集合，$w<em>{p,h}$是物品$p$与物品$h$的物品相似度，$R\</em>{u,h}$是用户$u$对物品$h$的已有评分。</p>
 <p>应用场景：</p>
 <p>适用于兴趣变化较为稳定的应用。电影推荐，电商推荐。</p>
-<h2><span id="xie-tong-guo-lu-de-you-que-dian">协同过滤的优缺点</span><a href="#xie-tong-guo-lu-de-you-que-dian" class="header-anchor"> </a></h2>
-<p>协同过滤是一个<strong>非常直观、可解释性很强</strong>的模型。但是它<strong>不具备较强的泛化能力</strong>。无法将两个物品相似这一信息推广到其他物品的相似度计算上。会有一个严重的问题——<strong>热门的物品具有很强的头部效应，容易跟大量物品产生相似性</strong>；<strong>而尾部的物品由于特征向量稀疏，很少与其他物品产生相似性，很少被推荐</strong>。</p>
-<h1><span id="xiao-jie">小结</span><a href="#xiao-jie" class="header-anchor"> </a></h1>
-<ul>
+<h2><span id="xie-tong-guo-lu-de-you-que-dian">协同过滤的优缺点</span><a href="#xie-tong-guo-lu-de-you-que-dian" class="header-anchor"> </a></h2><p>协同过滤是一个<strong>非常直观、可解释性很强</strong>的模型。但是它<strong>不具备较强的泛化能力</strong>。无法将两个物品相似这一信息推广到其他物品的相似度计算上。会有一个严重的问题——<strong>热门的物品具有很强的头部效应，容易跟大量物品产生相似性</strong>；<strong>而尾部的物品由于特征向量稀疏，很少与其他物品产生相似性，很少被推荐</strong>。</p>
+<h1><span id="xiao-jie">小结</span><a href="#xiao-jie" class="header-anchor"> </a></h1><ul>
 <li>协同过滤基于向量之间的关系计算相似度，类似于词向量之间的相似度计算。</li>
 <li>根据共现矩阵，行向量可以用来做用户协同过滤（UserCF），列向量做物品协同过滤（ItemCF）</li>
 <li>协同过滤的天然缺陷——推荐结果的头部效应较明显，处理稀疏向量的能力弱。</li>
